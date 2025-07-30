@@ -1,34 +1,77 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\song.cpp" />
-    <ClCompile Include="src\editor.cpp" />
+    <ClCompile Include="src\song.cpp">
+      <Filter>editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor.cpp">
+      <Filter>editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\4klang\4klang.h" />
-    <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\definitions.h" />
     <ClInclude Include="src\glext.h">
       <Filter>ext</Filter>
     </ClInclude>
-    <ClInclude Include="src\fp.h">
-      <Filter>ext</Filter>
+    <ClInclude Include="src\editor.h">
+      <Filter>editor</Filter>
     </ClInclude>
-    <ClInclude Include="src\song.h" />
-    <ClInclude Include="src\editor.h" />
+    <ClInclude Include="src\song.h">
+      <Filter>editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\music\music.h">
+      <Filter>music</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\post.inl">
+    <None Include="src\shaders\fxaa.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="src\shaders\fragment.inl">
+    <None Include="src\shaders\shaders.inl">
       <Filter>shaders</Filter>
     </None>
-    <None Include="src\shaders\fragment.frag">
+    <None Include="src\shaders\common.frag">
       <Filter>shaders</Filter>
     </None>
-    <None Include="src\shaders\post.frag">
+    <None Include="src\shaders\scene.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\scene.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\motoContent.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\rendering.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\backgroundContent.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\postprocess.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\roadContent.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\ids.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\shared.h">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="preprocess_shaders.bat" />
+    <None Include="src\shaders\camera.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\sheep.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\rendering2.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="src\shaders\logo.frag">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>
@@ -38,6 +81,12 @@
     </Filter>
     <Filter Include="shaders">
       <UniqueIdentifier>{84f225d6-acf8-4151-aab3-e246410cdeba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="editor">
+      <UniqueIdentifier>{6bea572d-5f4d-4221-a499-2638f6e437db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="music">
+      <UniqueIdentifier>{9bf824d7-0e9a-47d1-8928-742da8ce30c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
