@@ -24,33 +24,33 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}</ProjectGuid>
-    <ProjectName>Leviathan 2.0</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <ProjectName>Ctrl-Alt-Test 8k</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -84,15 +84,16 @@
     <IntDir>bin\debug\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <ExecutablePath>$(SolutionDir);$(ExecutablePath)</ExecutablePath>
-    <TargetName>leviathan-debug</TargetName>
+    <TargetName>cat-debug</TargetName>
     <GenerateManifest>false</GenerateManifest>
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">
     <OutDir>out\</OutDir>
     <IntDir>bin\debug\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <ExecutablePath>$(SolutionDir);$(ExecutablePath)</ExecutablePath>
-    <TargetName>leviathan-debug</TargetName>
+    <TargetName>cat-debug</TargetName>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -103,7 +104,7 @@
     <GenerateManifest>
     </GenerateManifest>
     <ExecutablePath>$(SolutionDir);$(ExecutablePath)</ExecutablePath>
-    <TargetName>leviathan-release</TargetName>
+    <TargetName>cat-release</TargetName>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">
@@ -114,8 +115,8 @@
     <GenerateManifest>
     </GenerateManifest>
     <ExecutablePath>$(SolutionDir);$(ExecutablePath)</ExecutablePath>
-    <TargetName>leviathan-release</TargetName>
-    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+    <TargetName>cat-release</TargetName>
+    <PreBuildEventUseInBuild>true</PreBuildEventUseInBuild>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">
@@ -126,7 +127,7 @@
     <GenerateManifest>
     </GenerateManifest>
     <ExecutablePath>$(SolutionDir);$(ExecutablePath)</ExecutablePath>
-    <TargetName>leviathan-snapshot</TargetName>
+    <TargetName>cat-snapshot</TargetName>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -135,7 +136,7 @@
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\bin/Debug/Leviathan.tlb</TypeLibraryName>
+      <TypeLibraryName>.\bin/Debug/cat.tlb</TypeLibraryName>
       <HeaderFileName />
     </Midl>
     <ClCompile>
@@ -169,8 +170,8 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;opengl32.lib;src/4klang/4klang.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>out/leviathan-debug.exe</OutputFile>
+      <AdditionalDependencies>winmm.lib;src/music/music.obj;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>out/cat-debug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>bin\debug\$(TargetName).pdb</ProgramDatabaseFile>
@@ -184,15 +185,14 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>$(OutDir)Leviathan.bsc</OutputFile>
+      <OutputFile>$(OutDir)cat.bsc</OutputFile>
     </Bscmake>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PreBuildEvent>
-      <Command>shader_minifier.exe -v -o src\shaders\fragment.inl src\shaders\fragment.frag
-shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <Message>Minify user-supplied shader files.</Message>
+      <Command>preprocess_shaders.bat --minify</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">
@@ -201,7 +201,7 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\bin/Debug/Leviathan.tlb</TypeLibraryName>
+      <TypeLibraryName>.\bin/Debug/cat.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
@@ -238,8 +238,8 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;opengl32.lib;src/4klang/4klang.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>out/leviathan-debug.exe</OutputFile>
+      <AdditionalDependencies>winmm.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>out/cat-debug.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>bin\debug\$(TargetName).pdb</ProgramDatabaseFile>
@@ -260,15 +260,14 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>$(OutDir)Leviathan.bsc</OutputFile>
+      <OutputFile>$(OutDir)cat.bsc</OutputFile>
     </Bscmake>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PreBuildEvent>
-      <Command>shader_minifier.exe -v -o src\shaders\fragment.inl src\shaders\fragment.frag
-shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <Message>Minify user-supplied shader files.</Message>
+      <Command>preprocess_shaders.bat</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -277,7 +276,7 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\bin/Release/Leviathan.tlb</TypeLibraryName>
+      <TypeLibraryName>.\bin/Release/cat.tlb</TypeLibraryName>
       <HeaderFileName />
     </Midl>
     <ClCompile>
@@ -286,14 +285,14 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WINDOWS;A32BITS;SIMD;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;WINDOWS;A32BITS;SIMD;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StructMemberAlignment>1Byte</StructMemberAlignment>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <PrecompiledHeaderOutputFile>bin\Release\Leviathan.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>bin\Release\cat.pch</PrecompiledHeaderOutputFile>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <AssemblerListingLocation>bin\release\</AssemblerListingLocation>
       <ObjectFileName>bin\release\</ObjectFileName>
@@ -322,9 +321,9 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalOptions>/CRINKLER  /RANGE:opengl32 /HASHTRIES:300 /COMPMODE:SLOW /ORDERTRIES:9000 /REPORT:out.html /PROGRESSGUI /HASHSIZE:1000 /UNSAFEIMPORT /UNALIGNCODE /SATURATE /NOINITIALIZERS /TRANSFORM:CALLS /TRUNCATEFLOATS:32 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>opengl32.lib;winmm.lib;src/4klang/4klang.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>out\leviathan-release.exe</OutputFile>
+      <AdditionalOptions>/CRINKLER  /RANGE:opengl32 /HASHTRIES:300 /COMPMODE:SLOW /ORDERTRIES:3000 /REPORT:out.html /PROGRESSGUI /HASHSIZE:1000 /UNSAFEIMPORT /UNALIGNCODE /SATURATE /NOINITIALIZERS /TRANSFORM:CALLS /TRUNCATEFLOATS:32 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>opengl32.lib;src/music/music.obj;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>out\cat-release.exe</OutputFile>
       <SuppressStartupBanner>
       </SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
@@ -351,15 +350,14 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\bin/Release/Leviathan.bsc</OutputFile>
+      <OutputFile>.\bin/Release/cat.bsc</OutputFile>
     </Bscmake>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PreBuildEvent>
-      <Command>shader_minifier.exe -v -o src\shaders\fragment.inl src\shaders\fragment.frag
-shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <Message>Minify user-supplied shader files.</Message>
+      <Command>preprocess_shaders.bat --minify</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">
@@ -368,7 +366,7 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\bin/Release/Leviathan.tlb</TypeLibraryName>
+      <TypeLibraryName>.\bin/Release/cat.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
@@ -379,14 +377,14 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WINDOWS;A32BITS;SIMD;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;WINDOWS;A32BITS;SIMD;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StructMemberAlignment>1Byte</StructMemberAlignment>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <PrecompiledHeaderOutputFile>bin\Release\Leviathan.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>bin\Release\cat.pch</PrecompiledHeaderOutputFile>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <AssemblerListingLocation>bin\release\</AssemblerListingLocation>
       <ObjectFileName>bin\release\</ObjectFileName>
@@ -415,8 +413,8 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/CRINKLER  /RANGE:opengl32 /HASHTRIES:1000 /COMPMODE:VERYSLOW /ORDERTRIES:30000 /REPORT:out.html /PROGRESSGUI /HASHSIZE:1000 /UNSAFEIMPORT /UNALIGNCODE /SATURATE /NOINITIALIZERS /TRANSFORM:CALLS %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>opengl32.lib;winmm.lib;src/4klang/4klang.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>out\leviathan-release.exe</OutputFile>
+      <AdditionalDependencies>opengl32.lib;winmm.lib;src/music/music.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>out\cat-release.exe</OutputFile>
       <SuppressStartupBanner>
       </SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
@@ -445,14 +443,14 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\bin/Release/Leviathan.bsc</OutputFile>
+      <OutputFile>.\bin/Release/cat.bsc</OutputFile>
     </Bscmake>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PreBuildEvent>
-      <Command>shader_minifier.exe -v -o src\shaders\fragment.inl src\shaders\fragment.frag</Command>
       <Message>Minify user-supplied shader files.</Message>
+      <Command>preprocess_shaders.bat --minify</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">
@@ -461,7 +459,7 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\bin/Release/Leviathan.tlb</TypeLibraryName>
+      <TypeLibraryName>.\bin/Release/cat.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
@@ -471,14 +469,14 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WINDOWS;A32BITS;SIMD;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS_IGNORE_PACKING_MISMATCH;WINDOWS;A32BITS;SIMD;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>false</StringPooling>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StructMemberAlignment>1Byte</StructMemberAlignment>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <PrecompiledHeaderOutputFile>bin\Release\Leviathan.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>bin\Release\cat.pch</PrecompiledHeaderOutputFile>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <AssemblerListingLocation>bin\release\</AssemblerListingLocation>
       <ObjectFileName>bin\release\</ObjectFileName>
@@ -512,8 +510,8 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/CRINKLER  /RANGE:opengl32 /HASHTRIES:100 /COMPMODE:INSTANT /ORDERTRIES:2000 /PROGRESSGUI /HASHSIZE:100 /UNSAFEIMPORT /UNALIGNCODE /SATURATE /NOINITIALIZERS /TRANSFORM:CALLS %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>opengl32.lib;winmm.lib;src/4klang/4klang.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>out\leviathan-snapshot.exe</OutputFile>
+      <AdditionalDependencies>opengl32.lib;winmm.lib;src/music/music.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>out\cat-snapshot.exe</OutputFile>
       <SuppressStartupBanner>
       </SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
@@ -544,72 +542,58 @@ shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\bin/Release/Leviathan.bsc</OutputFile>
+      <OutputFile>.\bin/Release/cat.bsc</OutputFile>
     </Bscmake>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PreBuildEvent>
-      <Command>shader_minifier.exe -v -o src\shaders\fragment.inl src\shaders\fragment.frag
-shader_minifier.exe -v -o src\shaders\post.inl src\shaders\post.frag</Command>
       <Message>Minify user-supplied shader files.</Message>
+      <Command>preprocess_shaders.bat --minify</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\editor.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="src\4klang\4klang.h" />
-    <ClInclude Include="src\debug.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="src\definitions.h" />
-    <ClInclude Include="src\fp.h" />
+    <ClInclude Include="src\editor.h" />
     <ClInclude Include="src\glext.h" />
-    <ClInclude Include="src\song.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="src\music\music.h" />
+    <ClInclude Include="src\song.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\editor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\song.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\fragment.frag">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="src\shaders\fragment.inl" />
-    <None Include="src\shaders\post.frag">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Editor|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Snapshot|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Heavy Release|Win32'">true</ExcludedFromBuild>
-    </None>
-    <None Include="src\shaders\post.inl" />
+    <None Include="preprocess_shaders.bat" />
+    <None Include="src\shaders\backgroundContent.frag" />
+    <None Include="src\shaders\camera.frag" />
+    <None Include="src\shaders\common.frag" />
+    <None Include="src\shaders\fxaa.frag" />
+    <None Include="src\shaders\ids.frag" />
+    <None Include="src\shaders\logo.frag" />
+    <None Include="src\shaders\rendering2.frag" />
+    <None Include="src\shaders\shared.h" />
+    <None Include="src\shaders\motoContent.frag" />
+    <None Include="src\shaders\postprocess.frag" />
+    <None Include="src\shaders\rendering.frag" />
+    <None Include="src\shaders\roadContent.frag" />
+    <None Include="src\shaders\scene.frag" />
+    <None Include="src\shaders\scene.vert" />
+    <None Include="src\shaders\shaders.inl" />
+    <None Include="src\shaders\sheep.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
