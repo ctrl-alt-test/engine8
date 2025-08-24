@@ -54,6 +54,10 @@ int main()
 {
 	fprintf(stdout, "calculating sound. please wait ...\n");
 
+#ifdef SU_LOAD_GMDLS
+	su_load_gmdls();
+#endif // SU_LOAD_GMDLS
+
 	// fill the sound buffer
 	su_render_song(sound_buffer);
 
@@ -80,7 +84,7 @@ int main()
 	*((DWORD*)(&WaveHeader[40])) = SU_LENGTH_IN_SAMPLES * SU_CHANNEL_COUNT * 2;		// size of raw sample data to come
 
 	// write wave file
-	FILE* file = fopen("moto.wav", "wb");
+	FILE* file = fopen("themusic.wav", "wb");
 	if (file)
 	{
 		fwrite(WaveHeader, 1, 44, file);

@@ -27,7 +27,7 @@
 //#define USE_POSTPROCESS 0
 
 // Relative path or absolute path to a wav file. Within VS, current path is `Intro`.
-#define TRACK_AS_WAV_FILE L"moutard.wav"
+#define TRACK_AS_WAV_FILE L"themusic.wav"
 
 #include "glext.h"
 #pragma data_seg(".shader")

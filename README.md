@@ -7,12 +7,22 @@ to maintain and improve this repository as we work on new intros.
 
 ## Updates
 
+Here's what changed compared to Leviathan 2.0:
+
 * Updated to Visual Studio 2022 (tested with the free Community edition).
 * Updated Shader Minifier.
 * Added a shader preprocessor to support `#include` statements.
+* Made it easier to switch the resolution (cf. `shared.h`).
 * Updated the editor mode to work without sound.
 * Switched the music to [Sointu](https://github.com/vsariola/sointu), a successor to 4klang.
 * Added a `shaders.min.frag` file to track changes in the minified code.
+
+Music:
+* `music.asm` comes from Sointu.
+* `music.obj` is expected, run `compile.bat` in `src/music` to build it.
+* To synchronize the graphics with the music, you'll want to enable music in the `Editor` build:
+    - Make sure `#define SOUND_ON` is set.
+    - It needs a .wav file called `themusic.wav`; you can generate it by running the `wav_export` project.
 
 ---
 

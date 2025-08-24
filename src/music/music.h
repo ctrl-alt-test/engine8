@@ -3,14 +3,14 @@
 #define SU_RENDER_H
 
 #define SU_CHANNEL_COUNT        2
-#define SU_LENGTH_IN_SAMPLES    6115200
+#define SU_LENGTH_IN_SAMPLES    4850560
 #define SU_BUFFER_LENGTH        (SU_LENGTH_IN_SAMPLES*SU_CHANNEL_COUNT)
 
 #define SU_SAMPLE_RATE          44100
-#define SU_BPM                  90
+#define SU_BPM                  192
 #define SU_ROWS_PER_BEAT        4
 #define SU_ROWS_PER_PATTERN     16
-#define SU_LENGTH_IN_PATTERNS   52
+#define SU_LENGTH_IN_PATTERNS   88
 #define SU_LENGTH_IN_ROWS       (SU_LENGTH_IN_PATTERNS*SU_PATTERN_SIZE)
 #define SU_SAMPLES_PER_ROW      (SU_SAMPLE_RATE*60/(SU_BPM*SU_ROWS_PER_BEAT))
 
