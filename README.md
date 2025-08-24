@@ -1,3 +1,21 @@
+This repository is derived from https://github.com/armak/Leviathan-2.0/ (it
+doesn't seem maintained anymore and the PR we sent there has been ignored for a
+long time).
+
+This repo includes updates that we made for Ctrl-Alt-Test 8k intros. The goal is
+to maintain and improve this repository as we work on new intros.
+
+## Updates
+
+* Updated to Visual Studio 2022 (tested with the free Community edition).
+* Updated Shader Minifier.
+* Added a shader preprocessor to support `#include` statements.
+* Updated the editor mode to work without sound.
+* Switched the music to [Sointu](https://github.com/vsariola/sointu), a successor to 4klang.
+* Added a `shaders.min.frag` file to track changes in the minified code.
+
+---
+
 # Leviathan 2.0
 Leviathan is a simple "framework" for developing small (around 1-8 kilobyte) [Demoscene](https://en.wikipedia.org/wiki/Demoscene) productions. It is primarily developed for creating the [Prismbeings](https://www.pouet.net/groups.php?which=12646) 4k Intros. "Intro" is parlance for a size-wise small Demo.
 
