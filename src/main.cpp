@@ -1,12 +1,10 @@
 // custom build and feature flags
 #ifdef DEBUG
-	#define OPENGL_DEBUG        1
 	#define FULLSCREEN          0
 	#define DESPERATE           0
 	#define BREAK_COMPATIBILITY 0
 	// #define SOUND_ON
 #else
-	#define OPENGL_DEBUG        0
 	#define FULLSCREEN          1
 	#define DESPERATE           0
 	#define BREAK_COMPATIBILITY 0
@@ -22,7 +20,7 @@
 // Global defines
 //#define USE_FXAA 1
 #define USE_CREATE_SHADER_PROGRAM // Save almost 40 bytes, require OpenGL 4.1 (Anat : doesn't work on my emulated windows)
-//#define USE_POSTPROCESS 0
+// #define USE_POSTPROCESS 1
 
 // Relative path or absolute path to a wav file. Within VS, current path is `Intro`.
 #define TRACK_AS_WAV_FILE L"themusic.wav"

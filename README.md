@@ -1,6 +1,6 @@
 # Engine8
 
-A demoscene framework intended for 1k, 4k, 8k PC intros. This framework is based
+A demoscene framework intended for 4k and 8k PC intros. This framework is based
 on [Leviathan 2.0](https://github.com/armak/Leviathan-2.0/), but it's updated
 and has more features.
 
@@ -28,9 +28,15 @@ Music (we plan to improve this workflow):
     - Make sure `#define SOUND_ON` is set.
     - It needs a .wav file called `themusic.wav`; you can generate it by running the `wav_export` project.
 
-(The rest of the readme needs an update.)
+## Tips
 
----
+* Set the resolution in `src/shaders/shared.h`; the file is shared between the
+  C++ and the GLSL code. Set also the demo duration there.
+* Use "Editor" configuration when developing.
+* Try "Snapshot" configuration to make sure the demo works outside the editor.
+    * In your commit messages, include the size of the binary (snapshot configuration). This is useful to identify size regressions and make sure bytes are well spent.
+* Use "Release" if the snapshot size becomes too big.
+* Use "Heavy release" if "release" is not enough and you don't mind waiting even longer.
 
 ## "Features"
 * Kept as simple as possible, made for productivity.
@@ -47,40 +53,55 @@ Windows-specific.
 
 ## Configurations
 This section describes the different build configurations available from Visual Studio IDE
+
 ### Heavy Release
 Uses heavier Crinkler settings to squeeze out maximum compression (note though that the /VERYSLOW flag could sometimes backfire and produce a larger executable). Also doesn't do shader minification since it assumes the user is performing hand minifications to the .inl source, which would be overwritten by the Shader Minifier.
+
 ### Release
 Generally recommended for producing a final executable to be released. Uses moderate Crinkler settings.
+
 ### Snapshot
 Use for general development. Only minimal crinklering but nothing extra included. Useful still for keeping track of relative size changes. This configuration overwrites Release configuration binaries, but doesn't generate and overwrite crinkler report.
+
 ### Debug
 Deprecated, might work but currently not really useful and not updated. Editor covers everything in this configuration.
+
 ### Editor
 Creates a bigger exe similar to Debug, but with keyboard controls for pausing and seeking around temporally. Requires a pre-rendered copy of the audio track used (well, not a must but...). Overwrites Debug configuration binaries.
 
 ## Build Flags
 This section describes the preprocessor definitions available for various features and size optimizations.
-### OPENGL_DEBUG
-Checks for shader compilation errors on initialization. Also enables to use the CHECK_ERRORS macro on debug.h. You want to leave this disabled in the final release obviously.
+
 ### FULLSCREEN
 Changes the display mode to fullscreen instead of a static window. You want to use this in your final release but probably not while developing and debugging. Disabling this saves around 20 bytes.
+
 ### DESPERATE
 Enabling this disables message handling, which isn't strictly necessary but makes running the intro much more reliable and compatible. Enabling this saves around 20 bytes.
+
 ### BREAK_COMPATIBILITY
 Enabling this uses a pixel format descriptor that uses parameters that are mostly zeroes. This improves the compressability at the cost of violating the API specifications. You might be able to run your intro currently, but might break in the future or on other peoples' configurations right now. Enabling this saves around 5 bytes.
-### POST_PASS
+
+### USE_POSTPROCESS
 Enables using the OpenGL backbuffer as a framebuffer and texture to perform simple post processing or other functionality.
-### USE_MIPMAPS
-Generates mipmaps for the backbuffer texture.
-### USE_AUDIO
-Disabling this doesn't include or init 4klang at all.
-### NO_UNIFORMS
-Enables using the gl_Color vertex attribute to pass variables to the shader instead of the usual uniform uploading. This saves one function import and around 10 bytes.
+
+### SOUND_ON
+Play the music during the demo. The framework uses Sointu.
+Put your music in `src/music`, run `compile.bat` and build the project.
+
+Unset the macro when working on a demo and you don't have a music yet. Or
+if you don't want to listen to it for the 100th time.
 
 ## Contributing
-Fork your own and submit a pull request, ideas always welcome. Please don't add any additional dependencies unless it's a single-file-header library or something similar, and non-GPL licensed. Inclusion of CMake or other such tools is also not considered.
+
+Ideas are always welcome. Feel free to file bug reports and request features.
 
 ## Acknowledgements
+
+* [noby](https://github.com/armak) for [Leviathan](https://github.com/armak/Leviathan-2.0/).
+* Omar Cornut and other contributors for [Dear ImGui](https://github.com/ocornut/imgui).
+* Anat for the original integration in [Mouton](http://github.com/ctrl-alt-test/mouton).
+
+Acknowledgements inherited from the Leviathan project:
 * Rimina for initial motivation and OpenGL debug functions.
 * LJ for giving suggestions for some nice hacks.
 * Fizzer for help with implementing some of said hacks.
