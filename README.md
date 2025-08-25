@@ -7,6 +7,39 @@ and has more features.
 This framework is used by Ctrl-Alt-Test 8k intros. The goal is to maintain and
 improve this repository as we work on new intros.
 
+## How this works
+
+### Workflow
+
+Select the "Editor" configuration, run the project.
+
+* You should get an OpenGL window that displays a pixel shader.
+* The default shader is quite big; modify `src\shaders\scene.frag` with your favorite editor.
+    * When you press `ctrl+s` anywhere, the demo will recompile the shader and update the view.
+    * The vertex shader and the postprocess are disabled by default, but the
+      code is still around.
+
+### Shortcuts
+
+* `alt-down`: pause
+* `alt-up`: play
+* `alt-right`: go forward in time (use `shift` for smaller steps)
+* `alt-left`: go back in time (use `shift` for smaller steps)
+
+A new ImGui widget has been added to go anywhere in time.
+In the future, we'd like to provide more ImGui widgets.
+
+### Music
+
+* `src/music/music.asm` comes from [Sointu](https://github.com/vsariola/sointu).
+  Replace it with your music.
+* `music.obj` is expected, run `compile.bat` in `src/music` to build it.
+* To synchronize the graphics with the music, you'll want to enable music in the `Editor` build:
+    - Make sure `#define SOUND_ON` is set.
+    - It needs a .wav file called `themusic.wav`; you can generate it by running the `wav_export` project.
+
+We plan to simplify this workflow in the future.
+
 ## Updates
 
 Here's what changed compared to Leviathan 2.0:
@@ -21,12 +54,6 @@ Here's what changed compared to Leviathan 2.0:
 * Switched the music to [Sointu](https://github.com/vsariola/sointu), a successor to 4klang.
 * Added a `shaders.min.frag` file to track changes in the minified code.
 
-Music (we plan to improve this workflow):
-* `music.asm` comes from Sointu.
-* `music.obj` is expected, run `compile.bat` in `src/music` to build it.
-* To synchronize the graphics with the music, you'll want to enable music in the `Editor` build:
-    - Make sure `#define SOUND_ON` is set.
-    - It needs a .wav file called `themusic.wav`; you can generate it by running the `wav_export` project.
 
 ## Tips
 
@@ -100,6 +127,7 @@ Ideas are always welcome. Feel free to file bug reports and request features.
 * [noby](https://github.com/armak) for [Leviathan](https://github.com/armak/Leviathan-2.0/).
 * Omar Cornut and other contributors for [Dear ImGui](https://github.com/ocornut/imgui).
 * Anat for the original integration in [Mouton](http://github.com/ctrl-alt-test/mouton).
+* [Sointu](https://github.com/vsariola/sointu) contributors
 
 Acknowledgements inherited from the Leviathan project:
 * Rimina for initial motivation and OpenGL debug functions.
