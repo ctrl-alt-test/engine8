@@ -24,7 +24,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{59C1D4F3-AE93-4A0A-B4FE-60841CA865E5}</ProjectGuid>
-    <ProjectName>Ctrl-Alt-Test 8k</ProjectName>
+    <ProjectName>Engine8</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
