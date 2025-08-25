@@ -2,10 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\song.cpp">
-      <Filter>editor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\editor.cpp">
+    <ClCompile Include="src\edit\song.cpp">
       <Filter>editor</Filter>
     </ClCompile>
     <ClCompile Include="src\thirdparty\imgui\imgui.cpp">
@@ -29,19 +26,20 @@
     <ClCompile Include="src\thirdparty\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="src\editui.cpp">
+    <ClCompile Include="src\edit\editui.cpp">
       <Filter>editor</Filter>
     </ClCompile>
+    <ClCompile Include="src\edit\editor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\definitions.h" />
     <ClInclude Include="src\glext.h">
       <Filter>ext</Filter>
     </ClInclude>
-    <ClInclude Include="src\editor.h">
+    <ClInclude Include="src\edit\editor.h">
       <Filter>editor</Filter>
     </ClInclude>
-    <ClInclude Include="src\song.h">
+    <ClInclude Include="src\edit\song.h">
       <Filter>editor</Filter>
     </ClInclude>
     <ClInclude Include="src\music\music.h">
@@ -71,7 +69,7 @@
     <ClInclude Include="src\thirdparty\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\editui.h">
+    <ClInclude Include="src\edit\editui.h">
       <Filter>editor</Filter>
     </ClInclude>
   </ItemGroup>

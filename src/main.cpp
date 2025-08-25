@@ -82,9 +82,9 @@ MMTIME mmtime = {
 #pragma code_seg(".main")
 void entrypoint(void)
 #else
-#include "editor.h"
-#include "song.h"
-#include "editui.h"
+#include "edit/editor.h"
+#include "edit/song.h"
+#include "edit/editui.h"
 int __cdecl main(int argc, char* argv[])
 #endif
 {
