@@ -13,8 +13,6 @@
 	#define SOUND_ON
 #endif
 
-#define DEMO_LENGTH_IN_S (60+47)
-
 #include <windows.h>
 #include <mmsystem.h>
 #include <mmreg.h>
@@ -86,6 +84,7 @@ void entrypoint(void)
 #else
 #include "editor.h"
 #include "song.h"
+#include "editui.h"
 int __cdecl main(int argc, char* argv[])
 #endif
 {
@@ -93,10 +92,14 @@ int __cdecl main(int argc, char* argv[])
 	#if FULLSCREEN
 		ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
 		ShowCursor(0);
-		const HDC hDC = GetDC(CreateWindow((LPCSTR)0xC018, 0, WS_POPUP | WS_VISIBLE | WS_MAXIMIZE, 0, 0, 0, 0, 0, 0, 0, 0));
+		HWND hwnd = CreateWindow((LPCSTR)0xC018, 0, WS_POPUP | WS_VISIBLE | WS_MAXIMIZE, 0, 0, 0, 0, 0, 0, 0, 0);
+	#elif EDITOR_CONTROLS
+		HWND hwnd = EditUI::createEditorWindow();
 	#else
-		HDC hDC = GetDC(CreateWindow((LPCSTR)0xC018, 0, WS_POPUP | WS_VISIBLE, 0, 0, XRES, YRES, 0, 0, 0, 0));
+		HWND hwnd = CreateWindow((LPCSTR)0xC018, 0, WS_POPUP | WS_VISIBLE, 0, 0, XRES, YRES, 0, 0, 0, 0);
 	#endif
+
+	HDC hDC = GetDC(hwnd);
 
 	// initalize opengl context
 	SetPixelFormat(hDC, ChoosePixelFormat(hDC, &pfd), &pfd);
@@ -185,7 +188,7 @@ int __cdecl main(int argc, char* argv[])
 	#endif
 
 	track.play();
-	double position = 0.0;
+	EditUI::init();
 #endif
 
 	// because all render passes need exactly the same input, we can do it once for all
@@ -200,7 +203,7 @@ int __cdecl main(int argc, char* argv[])
 	{
 #ifdef EDITOR_CONTROLS
 		editor.beginFrame(timeGetTime());
-		position = track.getTime();
+		double position = track.getTime();
 		float time = (float)position;
 #else
 #ifdef SOUND_ON
@@ -212,7 +215,11 @@ int __cdecl main(int argc, char* argv[])
 #endif
 #endif
 
-		#if !(DESPERATE)
+		#if EDITOR_CONTROLS
+			EditUI::draw(time);
+			track.seek(time);
+
+		#elif !(DESPERATE)
 			// do minimal message handling so windows doesn't kill your application
 			// not always strictly necessary but increases compatibility and reliability a lot
 			// normally you'd pass an msg struct as the first argument but it's just an
@@ -251,6 +258,10 @@ int __cdecl main(int argc, char* argv[])
 		glRects(-1, -1, 1, 1);
 #endif
 
+
+#ifdef EDITOR_CONTROLS
+		EditUI::render();
+#endif
 		SwapBuffers(hDC);
 
 		// handle functionality of the editor
