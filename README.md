@@ -1,33 +1,36 @@
-This repository is derived from https://github.com/armak/Leviathan-2.0/ (it
-doesn't seem maintained anymore and the PR we sent there has been ignored for a
-long time).
+# Engine8
 
-This repo includes updates that we made for Ctrl-Alt-Test 8k intros. The goal is
-to maintain and improve this repository as we work on new intros.
+A demoscene framework intended for 1k, 4k, 8k PC intros. This framework is based
+on [Leviathan 2.0](https://github.com/armak/Leviathan-2.0/), but it's updated
+and has more features.
+
+This framework is used by Ctrl-Alt-Test 8k intros. The goal is to maintain and
+improve this repository as we work on new intros.
 
 ## Updates
 
 Here's what changed compared to Leviathan 2.0:
 
-* Updated to Visual Studio 2022 (tested with the free Community edition).
-* Updated Shader Minifier.
+* ImGui integration (slider to control the time as in a video player).
+* Maintenance:
+    - Updated to Visual Studio 2022 (tested with the free Community edition).
+    - Updated Shader Minifier.
 * Added a shader preprocessor to support `#include` statements.
 * Made it easier to switch the resolution (cf. `shared.h`).
 * Updated the editor mode to work without sound.
 * Switched the music to [Sointu](https://github.com/vsariola/sointu), a successor to 4klang.
 * Added a `shaders.min.frag` file to track changes in the minified code.
 
-Music:
+Music (we plan to improve this workflow):
 * `music.asm` comes from Sointu.
 * `music.obj` is expected, run `compile.bat` in `src/music` to build it.
 * To synchronize the graphics with the music, you'll want to enable music in the `Editor` build:
     - Make sure `#define SOUND_ON` is set.
     - It needs a .wav file called `themusic.wav`; you can generate it by running the `wav_export` project.
 
----
+(The rest of the readme needs an update.)
 
-# Leviathan 2.0
-Leviathan is a simple "framework" for developing small (around 1-8 kilobyte) [Demoscene](https://en.wikipedia.org/wiki/Demoscene) productions. It is primarily developed for creating the [Prismbeings](https://www.pouet.net/groups.php?which=12646) 4k Intros. "Intro" is parlance for a size-wise small Demo.
+---
 
 ## "Features"
 * Kept as simple as possible, made for productivity.
@@ -38,14 +41,9 @@ Leviathan is a simple "framework" for developing small (around 1-8 kilobyte) [De
 * Easy to customize for your needs.
 
 ## Compatibility
-Current version intended to be used with Visual Studio 2017 (any version). Make sure you have a version with the latest Windows SDK installed (at least version 10.0.17134.0), or use version 8.1. With some extra configuration 2015 and 2013 should work as well. Leviathan is is very Windows-specific and isn't really sensibly portable anywhere else.
 
-### Components
-Leviathan requires these componens to be installed with the Visual Studio configuration. Run the Visual Studio Installer to check you have at least these installed:
-* **VC++ 2017 version 15.9 v14.16 latest v141 tools**, or VC++ 2015.3 v14.00 (v140)
-* **Windows 10 SDK** (any version should be fine, Leviathan currently defaults to 10.0.17134.0, change as needed) or Windows 8.1 SDK
-* Windows Universal CRT SDK
-* Windows Universal C Runtime
+This framework is developed with Visual Studio Community 2022. It is
+Windows-specific.
 
 ## Configurations
 This section describes the different build configurations available from Visual Studio IDE
@@ -81,14 +79,6 @@ Enables using the gl_Color vertex attribute to pass variables to the shader inst
 
 ## Contributing
 Fork your own and submit a pull request, ideas always welcome. Please don't add any additional dependencies unless it's a single-file-header library or something similar, and non-GPL licensed. Inclusion of CMake or other such tools is also not considered.
-
-## TODO
-* Automatically render and dump audio in Editor mode if no .wav already exists.
-* Support for more softsynths?
-* Editor mode overlays (non-interactive seekbar, etc.).
-* More functionality to add further render passes easily.
-* Continue Structuring the code better so not everything is inlined in the main loop.
-* Write out a version in assembly to use in the Release configuration.
 
 ## Acknowledgements
 * Rimina for initial motivation and OpenGL debug functions.
