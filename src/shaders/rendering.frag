@@ -1,12 +1,8 @@
 vec2 sceneSDF(vec3 p)
 {
-    return MinDist(MinDist(MinDist(MinDist(MinDist(MinDist(
-        motoShape(p),
-        driverShape(p)),
-        terrainShape(p)),
+    return MinDist(MinDist(
+        terrainShape(p),
         treesShape(p)),
-        blood(p)),
-        panelWarning(p)),
         sheep(p, true));
 }
 
@@ -35,8 +31,6 @@ float shadow(vec3 ro, vec3 rd)
 vec3 sky(vec3 V, vec3 fogColor)
 {
     float cloud = noise(V/(0.05 + V.y));
-    cloud = pow(smoothstep(0.5, 0.51, cloud+1.), 0.2);
-    cloud = mix(1., cloud, 0.2);
 
     return 
         mix(
@@ -85,8 +79,7 @@ vec3 rayMarchScene(vec3 ro, vec3 rd)
     float ao = fastAO(p, n, .15, 1.) * fastAO(p, n, 1., .1)*.5;
     float material = dmat.y;
     
-    float shad =
-        (material == SKIN_ID || material == TEARS_ID) ?
+    float shad = (material == SKIN_ID) ?
         1.0 : shadow(p, sunDir);
     float fre = 1.0+dot(rd,n);
     
@@ -105,15 +98,7 @@ vec3 rayMarchScene(vec3 ro, vec3 rd)
         return skyColor;
     }
 
-    if (material-- == 0.) { // MOTO_ID
-        albedo *= 0.;
-        spe *= pow(spe, vec3(80.))*fre*15.;
-        sss *= 0.;
-    } else if (material-- == 0.) { // MOTO_WHEEL_ID
-        albedo = vec3(.01);
-        spe *= 0.02;
-        sss *= 0.;
-    } else if (material-- == 0.) { // TREE_ID
+    if (material-- == 0.) { // TREE_ID
         albedo = vec3(.2, .3, .2);
         sss *= 0.2;
         spe *= 0.;
@@ -169,13 +154,7 @@ vec3 rayMarchScene(vec3 ro, vec3 rd)
         
         // iris
         vec3 c = mix(vec3(.5,.3,.1) , vec3(.0,.8,1), smoothstep(0.16,i_irisSize,er)*.3+cos(theta*15.)*.04);
-        float filaments = smoothstep(-.9,1.,noise(vec3(er*10.,theta*30.+cos(er*50.+noise(vec3(theta))*50.)*1.,0.)))
-            + smoothstep(-.9,1.,noise(vec3(er*10.,theta*40.+cos(er*30.+noise(vec3(theta))*50.)*2.,0.)));
         float pupil = smoothstep(pupilSize,pupilSize+0.02, er);
-        albedo = c * (filaments*.5+.5) * (smoothstep(i_irisSize,i_irisSize-.01, er)); // brown to green
-        albedo *= vec3(1.,.8,.7) * pow(max(0.,dot(normalize(vec3(3.,1.,-1.)), ne)),8.)*300.+.5; // retro reflection
-        albedo *= pupil; // pupil
-        albedo += pow(spe,vec3(800.))*3; // specular light
         albedo = mix(albedo, vec3(.8), smoothstep(i_irisSize-0.01,i_irisSize, er)); // white eye
         albedo = mix(c*.3, albedo, smoothstep(0.0,0.05, abs(er-i_irisSize-0.0)+0.01)); // black edge
         
@@ -214,42 +193,6 @@ vec3 rayMarchScene(vec3 ro, vec3 rd)
         amb *= vec3(2.)*fre*fre;
         sss *= 0.;
         spe = vec3(1.,.3,.3) * pow(spe, vec3(500.))*5.;
-    } else if (material-- == 0.) { // PANEL_ID
-       vec3 p = p - panelWarningPos;
-        sss *= 0.;
-        spe = pow(spe, vec3(8.))*fre*20.;
-
-        if (n.z > .5) {
-            vec3 pp = p - vec3(-0.3,warningHeight - 0.25,0.);
-
-            float symbol;
-            if (sceneID==SCENE_MOTO) {
-                pp.xy *= 0.9;
-                float dist = 5.;
-                headRot = vec2(0., -0.3);
-                animationSpeed = vec3(0);
-                for (float x = -0.2; x <= 0.2; x += 0.08) {
-                    vec3 point = vec3(x, pp.y, pp.x);
-                    point.xz *= Rotation(0.1);
-                    dist = min(dist, sheep(point, false).x);
-                }
-                symbol = 1. - smoothstep(0.001, 0.01, dist);
-            } else {
-                symbol = smoothstep(0.13,0.1295, distance(p, vec3(0.,warningHeight-.45,-4.9)));
-                symbol += smoothstep(0.005,0.,UnevenCapsule2d(p.xy-vec2(0.,warningHeight-0.15), .06,.14,0.8));
-            }
-            float tri = Triangle(p-vec3(0.,warningHeight,-5.), vec2(1.3,.2), .01);
-            albedo = vec3(1.5,0.,0.);
-            albedo = mix(albedo, vec3(2.), smoothstep(0.005,.0, tri));
-            albedo = mix(albedo, vec3(0.), symbol);
-        } else {
-            albedo = vec3(.85,.95,1.);
-        }
-    } else if (material-- == 0.) { // TEARS_ID
-        albedo = vec3(1., .8, .65);
-        amb *= vec3(1.0, 0.85, 0.85);
-        sss = pow(sss, vec3(0.8, 1.8, 3.0) + 2.) * 2.;
-        spe = pow(spe, vec3(32.0)) * fre * fre * 40.;
     }
 
     // fog

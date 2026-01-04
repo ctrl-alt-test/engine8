@@ -29,7 +29,9 @@
     <ClCompile Include="src\edit\editui.cpp">
       <Filter>editor</Filter>
     </ClCompile>
-    <ClCompile Include="src\edit\editor.cpp" />
+    <ClCompile Include="src\edit\editor.cpp">
+      <Filter>editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\definitions.h" />

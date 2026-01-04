@@ -1,13 +1,9 @@
 // custom build and feature flags
 #ifdef DEBUG
 	#define FULLSCREEN          0
-	#define DESPERATE           0
-	#define BREAK_COMPATIBILITY 0
 	// #define SOUND_ON
 #else
 	#define FULLSCREEN          1
-	#define DESPERATE           0
-	#define BREAK_COMPATIBILITY 0
 	#define SOUND_ON
 #endif
 
@@ -217,7 +213,7 @@ int __cdecl main(int argc, char* argv[])
 			EditUI::draw(time);
 			track.seek(time);
 
-		#elif !(DESPERATE)
+		#else
 			// do minimal message handling so windows doesn't kill your application
 			// not always strictly necessary but increases compatibility and reliability a lot
 			// normally you'd pass an msg struct as the first argument but it's just an

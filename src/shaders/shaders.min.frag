@@ -1,15 +1,10 @@
 #version 150
 
 uniform float iTime;
-int sceneID=0;
-float camProjectionRatio=1.,wheelie=0.,globalFade=1.,shouldDrawLogo=0.,blink=0.,squintEyes=0.,sheepTears=-1.,headDist=0.,sheepPos=1e6,lightFalloff=1e4,pupilSize=.1;
+float camProjectionRatio=1.,globalFade=1.,blink=0.,headDist=0.,sheepPos=1e6;
 vec2 headRot=vec2(0,-.4);
-vec3 eyeDir=vec3(0,-.2,1),animationSpeed=vec3(1.5),camPos,camTa,panelWarningPos=vec3(6,0,0),motoPos,headLightOffsetFromMotoRoot=vec3(.53,.98,0),breakLightOffsetFromMotoRoot=vec3(-.8,.75,0);
+vec3 eyeDir=vec3(0,-.2,1),animationSpeed=vec3(1.5),camPos,camTa,headLightOffsetFromMotoRoot=vec3(.53,.98,0),breakLightOffsetFromMotoRoot=vec3(-.8,.75,0);
 out vec4 fragColor;
-float hash11(float x)
-{
-  return fract(sin(x)*43758.5453);
-}
 float hash21(vec2 xy)
 {
   return fract(sin(dot(xy,vec2(12.9898,78.233)))*43758.5453);
@@ -18,24 +13,12 @@ float hash31(vec3 xyz)
 {
   return hash21(vec2(hash21(xyz.xy),xyz.z));
 }
-vec2 hash12(float x)
-{
-  x=hash11(x);
-  return vec2(x,hash11(x));
-}
 float noise(vec3 x)
 {
   vec3 i=floor(x);
   x=fract(x);
   x=x*x*x*(x*(x*6.-15.)+10.);
   return mix(mix(mix(hash31(i+vec3(0)),hash31(i+vec3(1,0,0)),x.x),mix(hash31(i+vec3(0,1,0)),hash31(i+vec3(1,1,0)),x.x),x.y),mix(mix(hash31(i+vec3(0,0,1)),hash31(i+vec3(1,0,1)),x.x),mix(hash31(i+vec3(0,1,1)),hash31(i+vec3(1)),x.x),x.y),x.z)*2.-1.;
-}
-vec2 valueNoise2(float p)
-{
-  float p0=floor(p);
-  p-=p0;
-  p=p*p*(3.-2.*p);
-  return mix(hash12(p0),hash12(p0+1.),p);
 }
 float smin(float d1,float d2,float k)
 {
@@ -58,22 +41,10 @@ float smax(float a,float b,float k)
   float h=max(k-abs(a-b),0.);
   return max(a,b)+h*h*h/(6.*k*k);
 }
-float Box3(vec3 p,vec3 size,float corner)
-{
-  p=abs(p)-size+corner;
-  return length(max(p,0.))+min(max(max(p.x,p.y),p.z),0.)-corner;
-}
 float Ellipsoid(vec3 p,vec3 r)
 {
   float k0=length(p/r);
   return k0*(k0-1.)/length(p/(r*r));
-}
-float Segment3(vec3 p,vec3 a,vec3 b,out float h)
-{
-  p-=a;
-  a=b-a;
-  h=clamp(dot(p,a)/dot(a,a),0.,1.);
-  return length(p-a*h);
 }
 float capsule(vec3 p,vec3 a)
 {
@@ -81,13 +52,9 @@ float capsule(vec3 p,vec3 a)
   a=vec3(0,2,4.9)-a;
   return length(p-a*clamp(dot(p,a)/dot(a,a),0.,1.))-.2;
 }
-float Capsule(vec3 p,float h,float r)
+float Torus(vec3 p)
 {
-  p.y+=clamp(-p.y,0.,h);
-  return length(p)-r;
-}
-float Torus(vec3 p,vec2 t)
-{
+  vec2 t=vec2(.14,.05);
   return length(vec2(length(p.xz)-t.x,p.y))-t.y;
 }
 mat2 Rotation(float angle)
@@ -96,48 +63,11 @@ mat2 Rotation(float angle)
   angle=sin(angle);
   return mat2(c,angle,-angle,c);
 }
-float Triangle(vec3 p,vec2 h,float r)
-{
-  return max(abs(p.z)-h.y,smax(smax(p.x*.9+p.y*.5,-p.x*.9+p.y*.5,r),-p.y,r)-h.x*.5);
-}
-float UnevenCapsule2d(vec2 p)
-{
-  p.x=abs(p.x);
-  float a=sqrt(.99),k=dot(p,vec2(.1,a));
-  return k<0.?
-    length(p)-.06:
-    k>a*.8?
-      length(p-vec2(0,.8))-.14:
-      dot(p,vec2(a,-.1))-.06;
-}
 vec2 MinDist(vec2 d1,vec2 d2)
 {
   return d1.x<d2.x?
     d1:
     d2;
-}
-vec2 panelWarning(vec3 p)
-{
-  p-=panelWarningPos;
-  float pan=Triangle(p-vec3(0,3,-5),vec2(1.7,.1),.3);
-  if(pan>8.)
-    return vec2(1e6,3);
-  pan=smax(pan,-Triangle(p-vec3(0,3,-5.1),vec2(1.6,.1),.3),.001);
-  float tube=Box3(p-vec3(0,2,-5.1),vec3(.11,2,.08),0.);
-  p.y=abs(p.y-3.65)-.3;
-  tube=min(tube,Box3(p-vec3(0,0,-5.05),vec3(.35,.1,.05),0.));
-  vec2 dmat=vec2(tube,8);
-  return MinDist(dmat,vec2(pan,10));
-}
-vec2 blood(vec3 p)
-{
-  if(sceneID!=2)
-    return vec2(1e6,3);
-  p-=vec3(0,1.2,-2.5);
-  float d=p.y+smoothstep(1.5,8.,length(p.xz))+1.;
-  return d<.4?
-    d-=pow((noise(p*.9)*.5+noise(p*1.6)*.3+noise(p*2.7)*.1)*.5+.5,3.)*.45,vec2(d,9):
-    vec2(d,3);
 }
 vec2 terrainShape(vec3 p)
 {
@@ -147,11 +77,11 @@ vec2 terrainShape(vec3 p)
       float x=clamp(abs(p.x/3.5),0.,1.);
       height+=.2*(1.-x*x*x)+pow(noise(mod(p*50,100))*.5+.5,.01)*.1;
     }
-  return vec2(p.y-height,3);
+  return vec2(p.y-height,1);
 }
 float tree(vec3 localP,vec2 id)
 {
-  float h1=hash21(id),h2=hash11(h1),d=3.5;
+  float h1=hash21(id),h2=fract(sin(h1)*43758.5453),d=3.5;
   if(abs(id.x)<14.)
     return d;
   float treeHeight=mix(7.,20.,h1),treeWidth=max(3.5,treeHeight*mix(.3,.4,h2*h2));
@@ -165,233 +95,17 @@ vec2 treesShape(vec3 p)
 {
   vec2 id=round(p.xz/10.)*10.;
   p.xz-=id;
-  return vec2(tree(p,id),2);
+  return vec2(tree(p,id),0);
 }
-vec3 motoToWorldForCamera(vec3 v)
+vec2 sheep(vec3 p)
 {
-  v.xz*=Rotation(1.57);
-  return v+motoPos;
-}
-vec3 motoToWorld(vec3 v,bool isPos)
-{
-  v.xy*=Rotation(-.5*wheelie);
-  v.xz*=Rotation(1.57);
-  if(isPos)
-    v+=motoPos;
-  return v;
-}
-vec3 worldToMoto(vec3 v)
-{
-  v-=motoPos;
-  v.xz*=Rotation(-1.57);
-  v.xy*=Rotation(.5*wheelie);
-  return v;
-}
-vec2 driverShape(vec3 p)
-{
-  if(sceneID>=2)
-    return vec2(1e6,1);
-  float wind=noise((p+iTime)*12.);
-  p=worldToMoto(p)-vec3(-.35,.78,0);
-  float d=length(p);
-  if(d>1.2)
-    return vec2(d,1);
-  vec3 simP=p;
-  simP.z=abs(simP.z);
-  if(d<.8)
-    {
-      vec3 pBody=p;
-      pBody.z=max(abs(pBody.z)-.02,0);
-      pBody.xy*=Rotation(3.1);
-      pBody.yz*=Rotation(-.1);
-      d=smin(d,Capsule(pBody,.12,.12),.4);
-      pBody.y+=.2;
-      pBody.xy*=Rotation(-.6);
-      d=smin(d,Capsule(pBody,.12,.11),.08);
-      pBody.y+=.2;
-      pBody.xy*=Rotation(-.3);
-      pBody.yz*=Rotation(-.2);
-      d=smin(d,Capsule(pBody,.12,.12),.08);
-      pBody.y+=.1;
-      pBody.yz*=Rotation(1.7);
-      d=smin(d,Capsule(pBody,.12,.1),.06);
-      pBody=p;
-      pBody.y-=.48;
-      pBody.x-=.25;
-      pBody.xy*=Rotation(-.7);
-      d=min(d,length(vec2(max(abs(pBody.y)-.07,0),abs(length(pBody.xz)-.05)))-.04);
-    }
-  vec3 pArm=simP-vec3(.23,.45,.18);
-  pArm.yz*=Rotation(-.6);
-  pArm.xy*=Rotation(.2);
-  float arms=Capsule(pArm,.29,.06);
-  d=smin(d,arms,.02);
-  pArm.y+=.32;
-  pArm.xy*=Rotation(1.5);
-  arms=Capsule(pArm,.28,.04);
-  d=smin(d,arms,.02)+.005*wind;
-  pArm=simP-vec3(0,0,.13);
-  pArm.xy*=Rotation(1.55);
-  pArm.yz*=Rotation(-.4);
-  arms=Capsule(pArm,.35,.09);
-  d=smin(d,arms,.04);
-  pArm.y+=.4;
-  pArm.xy*=Rotation(-1.5);
-  arms=Capsule(pArm,.4,.06);
-  d=smin(d,arms,.04);
-  pArm.y+=.45;
-  pArm.xy*=Rotation(1.75);
-  pArm.yz*=Rotation(.25);
-  arms=Capsule(pArm,.2,.03);
-  d=smin(d,arms,.02)+.002*wind;
-  pArm=p-vec3(.39,.6,0);
-  arms=length(pArm*vec3(1.2,1,1.3-pArm.y))-.15;
-  return arms<d?
-    vec2(arms,0):
-    vec2(d,1);
-}
-vec2 wheelShape(vec3 p,float wheelRadius,float tireRadius,vec3 innerPart)
-{
-  wheelRadius=Torus(p.yzx,vec2(wheelRadius,tireRadius));
-  if(wheelRadius<.25)
-    {
-      p.z=abs(p.z);
-      float h;
-      h=Segment3(p,vec3(0),vec3(0,0,1),h);
-      wheelRadius=min(min(-smin(-wheelRadius,h-.22,.04),-min(min(min(.15-h,h-.08),p.z-.04),-p.z+.05)),Ellipsoid(p,innerPart));
-    }
-  return vec2(wheelRadius,1);
-}
-vec2 motoShape(vec3 p)
-{
-  p=worldToMoto(p);
-  float boundingSphere=length(p);
-  if(boundingSphere>2.)
-    return vec2(boundingSphere-1.5,0);
-  vec2 d=vec2(1e6,0);
-  vec3 frontWheelPos=vec3(.9,.33,0);
-  d=MinDist(d,wheelShape(p-frontWheelPos,.26,.07,vec3(.02,.02,.12)));
-  d=MinDist(d,wheelShape(p-vec3(-.85,.32,0),.17,.15,vec3(.2,.2,.01)));
-  vec3 pFork=p,pForkTop=vec3(-.48,.66,0),pForkAngle=pForkTop+vec3(-.14,.04,.05);
-  pFork.z=abs(pFork.z);
-  pFork-=frontWheelPos+vec3(0,0,.12);
-  float fork=Segment3(pFork,pForkTop,vec3(0),boundingSphere)-.025;
-  fork=min(fork,Segment3(pFork,pForkTop,pForkAngle,boundingSphere)-.0175);
-  float handle=Segment3(pFork,pForkAngle,pForkAngle+vec3(-.08,-.07,.3),boundingSphere);
-  fork=min(fork,handle-mix(.035,.02,smoothstep(.25,.4,boundingSphere)));
-  pFork=pFork-pForkAngle-vec3(0,.1,.15);
-  pFork.xz*=Rotation(.2);
-  pFork.xy*=Rotation(-.2);
-  handle=pFork.x-.02;
-  pFork.xz*=Rotation(.25);
-  handle=-min(handle,-Ellipsoid(pFork,vec3(.04,.05,.08)));
-  pFork.x-=.05;
-  pFork.yz*=Rotation(1);
-  handle=min(handle,max(length(pFork.xz)-.003,max(pFork.y,-pFork.y-.2)));
-  fork=min(fork,handle);
-  d=MinDist(d,vec2(fork,0));
-  pFork=p-headLightOffsetFromMotoRoot;
-  handle=Ellipsoid(pFork,vec3(.15,.2,.15));
-  if(handle<.2)
-    {
-      vec3 pHeadTopBottom=pFork;
-      pHeadTopBottom.xy*=Rotation(-.15);
-      handle=-min(min(min(-handle,-Ellipsoid(pHeadTopBottom-vec3(-.2,-.05,0),vec3(.35,.16,.25))),-Ellipsoid(pFork-vec3(-.2,-.08,0),vec3(.35,.25,.13))),-Ellipsoid(pFork-vec3(-.1,-.05,0),vec3(.2,.2,.3)));
-      pFork.xy*=Rotation(-.4);
-      handle=-min(-handle,-Ellipsoid(pFork-vec3(.1,0,0),vec3(.2,.3,.4)));
-    }
-  d=MinDist(d,vec2(handle,0));
-  handle=Box3(p-vec3(.4,.82,0),vec3(.04,.1,.08),.02);
-  d=MinDist(d,vec2(handle,0));
-  pFork=p-vec3(.1,.74,0);
-  pForkTop=pFork;
-  pForkTop.xy*=Rotation(.45);
-  pForkTop.x+=.05;
-  handle=Ellipsoid(pForkTop,vec3(.35,.2,.42));
-  if(handle<.1)
-    handle=-min(min(-handle,-Ellipsoid(pForkTop+vec3(0,.13,0),vec3(.5,.35,.22))),-Ellipsoid(pFork-vec3(0,.3,0),vec3(.6,.35,.4)));
-  d=MinDist(d,vec2(handle,0));
-  pFork=p-vec3(-.08,.44,0);
-  pForkTop=pFork;
-  pForkTop.x*=1.-pForkTop.y*.4;
-  pForkTop.x+=pForkTop.y*.1;
-  handle=Box3(pForkTop,vec3(.44,.29,.11),.02);
-  if(handle<.5)
-    {
-      vec3 pMotor1=pFork-vec3(.27,.12,0),pMotor2=pFork-vec3(0,.12,0);
-      pMotor1.xy*=Rotation(-.35);
-      pMotor2.xy*=Rotation(.35);
-      handle=min(min(handle,Box3(pMotor1,vec3(.1,.12,.2),.04)),Box3(pMotor2,vec3(.1,.12,.2),.04));
-      pMotor1=pFork-vec3(-.15,-.12,-.125);
-      pMotor1.xy*=Rotation(-.15);
-      float gearBox=Segment3(pMotor1,vec3(.2,0,0),vec3(-.15,0,0),boundingSphere);
-      gearBox-=mix(.08,.15,boundingSphere);
-      pMotor1.x+=.13;
-      float gearBoxCut=min(-pMotor1.z-.05,Box3(pMotor1,vec3(.16,.08,.1),.04));
-      gearBox=-min(-gearBox,-gearBoxCut);
-      handle=min(handle,gearBox);
-      gearBoxCut=Segment3(pFork-vec3(.24,-.13,0),vec3(0,0,.4),vec3(0,0,-.4),boundingSphere)-.02;
-      handle=min(handle,gearBoxCut);
-    }
-  d=MinDist(d,vec2(handle,0));
-  pFork=p-vec3(0,0,.2);
-  handle=Segment3(pFork,vec3(.24,.25,0),vec3(-.7,.3,.05),boundingSphere);
-  if(handle<.6)
-    handle=-min(-handle+mix(.04,.08,mix(boundingSphere,smoothstep(.5,.7,boundingSphere),.5)),p.x-.7*p.y+.9),handle=min(handle,Segment3(pFork,vec3(.24,.25,0),vec3(.32,.55,-.02),boundingSphere)-.04),handle=min(handle,Segment3(pFork,vec3(.22,.32,-.02),vec3(-.4,.37,.02),boundingSphere)-.04);
-  d=MinDist(d,vec2(handle,0));
-  pFork=p-vec3(-.44,.44,0);
-  handle=Ellipsoid(pFork,vec3(.8,.4,.2));
-  fork=length(p+vec3(1.05,-.1,0))-.7;
-  handle=max(handle,-fork);
-  if(handle<.2)
-    {
-      vec3 pSaddle=pFork-vec3(.35,.57,0);
-      pSaddle.xy*=Rotation(.4);
-      float seatSaddleCut=Ellipsoid(pSaddle,vec3(.5,.15,.6));
-      handle=-smin(min(-handle,seatSaddleCut),seatSaddleCut,.08);
-      pSaddle=pFork+vec3(0,-.55,0);
-      pSaddle.xy*=Rotation(.5);
-      seatSaddleCut=Ellipsoid(pSaddle,vec3(.8,.4,.4));
-      handle=-min(-handle,-seatSaddleCut);
-    }
-  return MinDist(d,vec2(handle,0));
-}
-float sunglasses(vec3 p)
-{
-  if(sceneID!=3)
-    return 1e6;
-  p-=vec3(0,.3,-.9);
-  vec3 framePos=p;
-  float h,middle=Segment3(p-vec3(0,-.1,-.4),vec3(-.3,0,0),vec3(.3,0,0),h)-.04;
-  framePos.x=abs(framePos.x)-.5;
-  h=Segment3(framePos,vec3(.3,0,0),vec3(.2,-.1,-.4),h)-.04;
-  h=min(h,middle);
-  framePos=p-vec3(0,-.25,-.4);
-  framePos.x=abs(framePos.x)-.4;
-  middle=length(framePos*vec3(.3,.4,1))-.1;
-  return min(h,middle);
-}
-vec2 sheep(vec3 p,bool shiftPos)
-{
-  if(shiftPos)
-    if(sceneID==3)
-      {
-        p-=motoPos+vec3(0,1.2,-.3);
-        p.yz*=Rotation(.5);
-        if(wheelie>0.)
-          p.yz*=Rotation(wheelie*.4),p.yz-=vec2(.35,.2)*wheelie;
-      }
-    else
-       p-=vec3(1,.46,sheepPos);
-  p/=.15;
+  p=(p-vec3(1,.46,sheepPos))/.15;
   float tb=iTime*animationSpeed.x*3.14;
   vec3 bodyMove=vec3(cos(tb),cos(tb*2.)*.1,0)*.025;
   tb=length(p*vec3(1,1,.825)-vec3(0,1.5,2.55)-bodyMove)-2.;
   if(tb>=3.)
-    return vec2(tb*.15,4);
+    return vec2(tb*.15,2);
   float n=pow(noise((p-bodyMove+vec3(0)+vec3(0,0,.5))*2.)*.5+.5,.75)*2.-1.;
-  if(sceneID==3)
-    n+=noise(p-bodyMove+vec3(0,0,-iTime*10.)*2.)*.2;
   tb=tb+.05-n*.2;
   n=mod(iTime*animationSpeed.x,2.);
   float a=smoothstep(0.,.5,n),b=smoothstep(.5,1.,n),c=smoothstep(1.,1.5,n),d=smoothstep(1.5,2.,n);
@@ -424,46 +138,36 @@ vec2 sheep(vec3 p,bool shiftPos)
   bodyMove.xz=Rotation((smoothstep(0.,1.,abs(mod(iTime,1.)*2.-1.))*animationSpeed.y-.5)*.25*.2+headRot.x)*bodyMove.xz;
   bodyMove.zy=Rotation(sin(iTime*animationSpeed.y)*.25*.2-headRot.y)*bodyMove.zy;
   c=smin(length(bodyMove-vec3(0,-1.3,-1.2))-1.,length(bodyMove-vec3(0))-.5,1.8);
-  d=sunglasses(bodyMove);
-  vec3 pp=bodyMove*vec3(.7,1,.7);
-  n=smin(length(bodyMove-vec3(0,.35,-.1))-.55-(cos(bodyMove.z*8.+bodyMove.y*4.5+bodyMove.x*4.)+cos(bodyMove.z*4.+bodyMove.y*6.5+bodyMove.x*8.))*.05,tb,.1);
+  vec3 pp;
+  d=smin(length(bodyMove-vec3(0,.35,-.1))-.55-(cos(bodyMove.z*8.+bodyMove.y*4.5+bodyMove.x*4.)+cos(bodyMove.z*4.+bodyMove.y*6.5+bodyMove.x*8.))*.05,tb,.1);
   pp=bodyMove;
   pp.yz=Rotation(-.6)*pp.yz;
   pp.x=abs(p.x)-.8;
   pp*=vec3(.3,1,.4);
   pp-=vec3(0,-.05-pow(pp.x,2.)*5.,-.1);
-  float ears=smax(length(pp)-.15,-length(pp-vec3(0,-.1,0))+.12,.01);
+  n=smax(length(pp)-.15,-length(pp-vec3(0,-.1,0))+.12,.01);
   pp.y*=.3;
   pp.y-=-.11;
   float earsClip=length(pp)-.16;
   pp=bodyMove;
   pp.x=abs(bodyMove.x)-.4;
-  float eyes=length(pp*vec3(1)-vec3(0,0,-1))-.3,eyeCap=abs(eyes)-.02,blink=mix(smoothstep(.95,.96,blink)*.3+cos(iTime*10.)*.02,.1,squintEyes);
+  float eyes=length(pp*vec3(1)-vec3(0,0,-1))-.3,eyeCap=abs(eyes)-.02,blink=mix(smoothstep(.95,.96,blink)*.3+cos(iTime*10.)*.02,.1,0.);
   eyeCap=smin(smax(eyeCap,smin(-abs(bodyMove.y+bodyMove.z*.025)+.25-blink,-bodyMove.z-1.,.2),.01),c,.02);
   c=min(c,eyeCap);
   pp.x=abs(bodyMove.x)-.2;
   pp.xz=Rotation(-.45)*pp.xz;
-  c=smin(smax(c,-length(pp-vec3(-.7,-1.2,-2.05))+.14,.1),Torus(pp.xzy-vec3(-.7,-1.94,-1.2),vec2(.14,.05)),.05);
-  if(sheepTears<0.)
-    eyeCap=1e6;
-  else
-    {
-      pp=bodyMove;
-      pp.x=abs(bodyMove.x)-.25;
-      float shift=sheepTears*.02;
-      eyeCap=smin(length(pp-vec3(0,-.15-shift*.5,-1.1-shift))-.01-shift*.1-(noise(pp*10.)*.5+.5)*.1,c+.01,.1);
-    }
-  blink=smin(tb,capsule(p-vec3(0,-.1,cos(p.y-.7)*.5),vec3(cos(iTime*animationSpeed.z)*.25,.2,5))-(cos(p.z*8.+p.y*4.5+p.x*4.)+cos(p.z*4.+p.y*6.5+p.x*3.))*.02,.1);
-  vec2 dmat=MinDist(MinDist(vec2(tb,4),vec2(blink,4)),vec2(n,4));
+  c=smin(smax(c,-length(pp-vec3(-.7,-1.2,-2.05))+.14,.1),Torus(pp.xzy-vec3(-.7,-1.94,-1.2)),.05);
+  eyeCap=smin(tb,capsule(p-vec3(0,-.1,cos(p.y-.7)*.5),vec3(cos(iTime*animationSpeed.z)*.25,.2,5))-(cos(p.z*8.+p.y*4.5+p.x*4.)+cos(p.z*4.+p.y*6.5+p.x*3.))*.02,.1);
+  vec2 dmat=MinDist(MinDist(vec2(tb,2),vec2(eyeCap,2)),vec2(d,2));
   dmat.x=smax(dmat.x,-earsClip,.15);
-  dmat=MinDist(MinDist(MinDist(MinDist(MinDist(MinDist(MinDist(dmat,vec2(a,5)),vec2(c,5)),vec2(eyeCap,11)),vec2(eyes,6)),vec2(b,7)),vec2(ears,5)),vec2(d,0));
+  dmat=MinDist(MinDist(MinDist(MinDist(MinDist(dmat,vec2(a,3)),vec2(c,3)),vec2(eyes,4)),vec2(b,5)),vec2(n,3));
   headDist=c;
   dmat.x*=.15;
   return dmat;
 }
 vec2 sceneSDF(vec3 p)
 {
-  return MinDist(MinDist(MinDist(MinDist(MinDist(MinDist(motoShape(p),driverShape(p)),terrainShape(p)),treesShape(p)),blood(p)),panelWarning(p)),sheep(p,true));
+  return MinDist(MinDist(terrainShape(p),treesShape(p)),sheep(p));
 }
 float fastAO(vec3 pos,vec3 nor,float maxDist,float falloff)
 {
@@ -506,18 +210,14 @@ vec3 rayMarchScene(vec3 ro,vec3 rd)
   vec3 p=ro+rd*t;
   vec2 dmat=sceneSDF(p),eps=vec2(1e-4,0);
   vec3 n=normalize(vec3(dmat.x-sceneSDF(p-eps.xyy).x,dmat.x-sceneSDF(p-eps.yxy).x,dmat.x-sceneSDF(p-eps.yyx).x)),sunDir=normalize(vec3(3.5,3,-1)),fogColor=vec3(.3,.5,.6);
-  float ao=fastAO(p,n,.15,1.)*fastAO(p,n,1.,.1)*.5,material=dmat.y,shad=material==5||material==11?
+  float ao=fastAO(p,n,.15,1.)*fastAO(p,n,1.,.1)*.5,material=dmat.y,shad=material==3?
     1.:
     shadow(p,sunDir),fre=1.+dot(rd,n);
   vec3 diff=vec3(1,.8,.7)*max(dot(n,sunDir),0.)*pow(vec3(shad),vec3(1,1.2,1.5)),bnc=vec3(1,.8,.7)*.1*max(dot(n,-sunDir),0.)*ao,sss=vec3(.5)*mix(fastAO(p,rd,.3,.75),fastAO(p,sunDir,.3,.75),.5),spe=vec3(1)*max(dot(reflect(rd,n),sunDir),0.),envm=vec3(0),amb=vec3(.4,.45,.5)*ao,emi=vec3(0);
   sunDir=vec3(0);
   if(t>=5e2)
-    return mix(fogColor,mix(vec3(.7),vec3(.2,.2,.6),mix(1.,pow(smoothstep(.5,.51,noise(rd/(.05+rd.y))+1.),.2),.2)),pow(smoothstep(0.,1.,rd.y),.4));
+    return mix(fogColor,mix(vec3(.7),vec3(.2,.2,.6),noise(rd/(.05+rd.y))),pow(smoothstep(0.,1.,rd.y),.4));
   if(material--==0.)
-    sunDir*=0.,spe*=pow(spe,vec3(80))*fre*15.,sss*=0.;
-  else if(material--==0.)
-    sunDir=vec3(.01),spe*=.02,sss*=0.;
-  else if(material--==0.)
     sunDir=vec3(.2,.3,.2),sss*=.2,spe*=0.;
   else if(material--==0.)
     if(abs(p.x)<3.5)
@@ -546,15 +246,13 @@ vec3 rayMarchScene(vec3 ro,vec3 rd)
       vec2 offset=t.xy/t.z*length(dir.xy)/length(ro-p)*.4;
       dir.xy-=offset*smoothstep(.01,0.,dot(dir,rd));
       float er=length(dir.xy),theta=atan(dir.x,dir.y);
-      b=mix(vec3(.5,.3,.1),vec3(0,.8,1),smoothstep(.16,.3,er)*.3+cos(theta*15.)*.04);
-      float pupil=smoothstep(pupilSize,pupilSize+.02,er);
-      sunDir=mix(b*.3,mix(b*((smoothstep(-.9,1.,noise(vec3(er*10.,theta*30.+cos(er*50.+noise(vec3(theta))*50.),0)))+smoothstep(-.9,1.,noise(vec3(er*10.,theta*40.+cos(er*30.+noise(vec3(theta))*50.)*2.,0))))*.5+.5)*smoothstep(.3,.29,er)*(vec3(1,.8,.7)*pow(max(0.,dot(normalize(vec3(3,1,-1)),dir)),8.)*3e2+.5)*pupil+pow(spe,vec3(800))*3,vec3(.8),smoothstep(.29,.3,er)),smoothstep(0.,.05,abs(er-.3)+.01));
+      sunDir=mix(mix(vec3(.5,.3,.1),vec3(0,.8,1),smoothstep(.16,.3,er)*.3+cos(theta*15.)*.04)*.3,mix(sunDir,vec3(.8),smoothstep(.29,.3,er)),smoothstep(0.,.05,abs(er-.3)+.01));
       n=mix(normalize(n+(eyeDir+n)*4.),n,smoothstep(.3,.32,er));
       t=reflect(rd,n);
       dir=normalize(vec3(1,1.5,-1));
       b=vec3(-dir.x,dir.y*.5,dir.z);
-      er=specular(t,dir,.1)+specular(t,b,2.)*.1+specular(t,normalize(dir+vec3(.2,0,0)),.3)+specular(t,normalize(dir+vec3(.2,0,.2)),.5)+specular(t,normalize(b+vec3(.1,0,.2)),8.)*.5;
-      envm=(mix(mix(vec3(.3,.3,0),vec3(.1),smoothstep(-.7,.2,t.y)),vec3(.3,.65,1),smoothstep(0.,1.,t.y))+er*vec3(1,.9,.8))*mix(.15,.2,pupil)*sqrt(fre)*2.5;
+      theta=specular(t,dir,.1)+specular(t,b,2.)*.1+specular(t,normalize(dir+vec3(.2,0,0)),.3)+specular(t,normalize(dir+vec3(.2,0,.2)),.5)+specular(t,normalize(b+vec3(.1,0,.2)),8.)*.5;
+      envm=(mix(mix(vec3(.3,.3,0),vec3(.1),smoothstep(-.7,.2,t.y)),vec3(.3,.65,1),smoothstep(0.,1.,t.y))+theta*vec3(1,.9,.8))*mix(.15,.2,smoothstep(.1,.12,er))*sqrt(fre)*2.5;
       sceneSDF(p);
       sunDir*=smoothstep(0.,.015,headDist)*.4+.6;
       spe*=0.;
@@ -565,79 +263,21 @@ vec3 rayMarchScene(vec3 ro,vec3 rd)
     sunDir=vec3(.6),sss*=0.,spe=pow(spe,vec3(8))*fre*2.;
   else if(material--==0.)
     sunDir=vec3(1,.01,.01)*.3,diff*=vec3(3),amb*=vec3(2)*fre*fre,sss*=0.,spe=vec3(1,.3,.3)*pow(spe,vec3(500))*5.;
-  else if(material--==0.)
-    {
-      vec3 p=p-panelWarningPos;
-      sss*=0.;
-      spe=pow(spe,vec3(8))*fre*20.;
-      if(n.z>.5)
-        {
-          vec3 pp=p-vec3(-.3,2.75,0);
-          float symbol;
-          if(sceneID==1)
-            {
-              pp.xy*=.9;
-              float dist=5.;
-              headRot=vec2(0,-.3);
-              animationSpeed=vec3(0);
-              for(float x=-.2;x<=.2;x+=.08)
-                {
-                  vec3 point=vec3(x,pp.yx);
-                  point.xz*=Rotation(.1);
-                  dist=min(dist,sheep(point,false).x);
-                }
-              symbol=1.-smoothstep(.001,.01,dist);
-            }
-          else
-             symbol=smoothstep(.13,.1295,length(p-vec3(0,2.55,-4.9)))+smoothstep(.005,0.,UnevenCapsule2d(p.xy-vec2(0,2.85)));
-          sunDir=mix(mix(vec3(1.5,0,0),vec3(2),smoothstep(.005,0.,Triangle(p-vec3(0,3,-5),vec2(1.3,.2),.01))),vec3(0),symbol);
-        }
-      else
-         sunDir=vec3(.85,.95,1);
-    }
-  else if(material--==0.)
-    sunDir=vec3(1,.8,.65),amb*=vec3(1,.85,.85),sss=pow(sss,vec3(.8,1.8,3)+2.)*2.,spe=pow(spe,vec3(32))*fre*fre*40.;
   diff=sunDir*(amb+diff*.5+bnc*2.+sss*2.)+envm+spe+emi;
   return mix(diff,fogColor,1.-exp(-t*.005));
 }
-void motoFaceImpactShot(float t_in_shot)
+bool getShot(inout float time)
 {
-  sceneID=1;
-  float shift=t_in_shot*.1,impact=smoothstep(9.7,10.,t_in_shot);
-  camPos=vec3(3.-impact-shift*1.2,.5,0);
-  camPos.xz+=valueNoise2(5e2*t_in_shot)*shift*.1;
-  camTa=vec3(0,1.+shift*.2,0);
-  camProjectionRatio=1.5+impact*5.+shift;
-  globalFade*=1.-impact;
-}
-void sheepScaredShot(float t_in_shot)
-{
-  animationSpeed*=0.;
-  eyeDir=vec3(0,-.1,1);
-  vec2 noise=valueNoise2(1e2*t_in_shot)*smoothstep(0.,5.,t_in_shot);
-  if(t_in_shot>2.)
-    sheepTears=t_in_shot;
-  if(t_in_shot>=5.)
-    noise*=.3,sheepTears=4.*(t_in_shot-4.);
-  headRot=vec2(0,-.1)+noise*.1;
-  camPos=vec3(1,.9,6.-t_in_shot*.2);
-  camTa=vec3(1,.8,7);
-  sheepPos=7.;
-  camProjectionRatio=1.5+t_in_shot*.4;
-  pupilSize=.2;
-}
-bool get_shot(inout float time,float duration)
-{
-  if(time<duration)
+  if(time<10.)
     return true;
-  time-=duration;
+  time-=10.;
   return false;
 }
 void selectShot()
 {
-  float time=iTime,verticalBump=valueNoise2(6.*iTime).x;
+  float time=iTime;
   blink=max(fract(iTime*.333),fract(iTime*.123+.1));
-  if(get_shot(time,10.))
+  if(getShot(time))
     {
       globalFade*=smoothstep(0.,7.,time);
       float motion=time*.1,vshift=smoothstep(6.,0.,time);
@@ -649,182 +289,15 @@ void selectShot()
       headRot=vec2(0,.4-motion*.5);
       eyeDir=vec3(0,.1-motion*.2,1);
     }
-  else if(get_shot(time,5.))
-    sceneID=1,camTa=vec3(1,1,0),camPos=vec3(-2.-2.5*time,.5+.2*time,sin(time));
-  else if(get_shot(time,5.))
-    {
-      float motion=time*.1;
-      camPos=vec3(2.5,.5,3.-motion);
-      sheepPos=5.-motion;
-      camTa=vec3(0,1,4.8-motion);
-      camProjectionRatio=1.5;
-      headRot=vec2(0,.2);
-      eyeDir=vec3(0,.1,1);
-    }
-  else if(get_shot(time,5.))
-    {
-      sceneID=1;
-      vec2 p=vec2(.95+mix(-1.,1.,valueNoise2(.5*iTime).y)+mix(-.01,.01,valueNoise2(6e2*iTime).y),.55+.05*verticalBump);
-      camPos=vec3(p,-2);
-      camTa=vec3(p,0);
-      camProjectionRatio=1.5;
-    }
-  else if(get_shot(time,5.))
-    {
-      float shift=smoothstep(3.5,3.8,time)*.5,motion=time*.1;
-      camPos=vec3(2.5,1,6);
-      sheepPos=5.-motion;
-      panelWarningPos=vec3(4,0,2.5);
-      camTa=mix(vec3(1,1,5),vec3(1,1.5,1),shift*2.);
-      headRot=vec2(0,.5);
-    }
-  else if(get_shot(time,5.))
-    {
-      sceneID=1;
-      float bump=.02*verticalBump;
-      camPos=vec3(-.2-.3*time,.88+.17*time+bump,.42);
-      camTa=vec3(.5,1.+.1*time+bump,.25);
-      panelWarningPos=vec3(4,0,-40);
-      camProjectionRatio=1.5;
-    }
-  else if(get_shot(time,3.))
-    {
-      float shift=smoothstep(0.,5.,time)+time*.1;
-      headRot=vec2(sin(time*2.)*.2,.5);
-      eyeDir=vec3(sin(time*2.)*.2,.3,1);
-      camPos=vec3(1,.6,6.-shift);
-      camTa=vec3(1,.8,7);
-      sheepPos=7.-shift;
-    }
-  else if(get_shot(time,2.))
-    sceneID=1,camPos=vec3(4.-time*.2,.8,0),camTa=vec3(-10,0,0),camProjectionRatio=1.5+time*.2;
-  else if(get_shot(time,5.))
-    {
-      float motion=time*.1,shift=smoothstep(3.5,4.,time),headShift=smoothstep(2.5,3.,time);
-      headRot=vec2(0,.4-headShift*.5);
-      eyeDir=vec3(.18-smoothstep(4.3,4.5,time)*.18-smoothstep(3.,1.,time)*.4,.1-headShift*.2,1);
-      camPos=vec3(1,.9,6.-shift-motion);
-      camTa=vec3(1,.8,7.-motion);
-      sheepPos=7.-motion;
-      camProjectionRatio=1.5+shift*2.;
-      squintEyes=smoothstep(3.3,3.5,time);
-    }
-  else if(get_shot(time,3.))
-    {
-      sceneID=1;
-      float shift=time/10.;
-      vec2 noise=valueNoise2(5e2*time);
-      camPos=vec3(3.-shift*1.2,.5,noise.y*.05);
-      shift=smoothstep(.5,0.,time);
-      float shiftUp=smoothstep(2.,2.5,time);
-      camTa=vec3(0,.5+shiftUp*.5,shift*.5);
-      camProjectionRatio=2.;
-    }
-  else if(get_shot(time,1.6))
-    sheepScaredShot(time),pupilSize=.1+smoothstep(0.,1.,time)*.1;
-  else if(get_shot(time,1.4))
-    motoFaceImpactShot(time);
-  else if(get_shot(time,1.4))
-    sheepScaredShot(time+1.5),blink=time*2.,headRot+=vec2(sin(time*40.)*.15,-.1+time*.5);
-  else if(get_shot(time,1.4))
-    motoFaceImpactShot(time+3.),lightFalloff/=3.;
-  else if(get_shot(time,1.6))
-    sheepScaredShot(time+3.4);
-  else if(get_shot(time,1.))
-    motoFaceImpactShot(time+5.),lightFalloff/=9.;
-  else if(get_shot(time,1.6))
-    sheepScaredShot(time+5.),camProjectionRatio++,blink=1.6-time;
-  else if(get_shot(time,2.))
-    motoFaceImpactShot(time+8.),lightFalloff/=30.;
-  else if(get_shot(time,10.))
-    sceneID=2,globalFade*=smoothstep(2.,5.,time)*smoothstep(9.,7.,time),camPos=vec3(2.5,1.5,-6.+time*.5),camTa=vec3(1,0,-9.+time*.5);
-  else if(get_shot(time,5.))
-    {
-      sceneID=3;
-      globalFade*=smoothstep(0.,1.,time);
-      float xnoise=mix(-1.,1.,valueNoise2(.5*time).y)+mix(-.01,.01,valueNoise2(6e2*time).y);
-      vec2 p=vec2(.95+xnoise,.5+.05*verticalBump);
-      camPos=vec3(p,-1.5);
-      camTa=vec3(p.x,p.y-.4,0);
-      camProjectionRatio=1.2;
-    }
-  else if(get_shot(time,5.))
-    {
-      sceneID=3;
-      float trans=smoothstep(3.,0.,time);
-      camTa=vec3(3,1.-trans*.8,0);
-      camPos=vec3(5.-.1*time,1.+.02*verticalBump,0);
-      headRot=vec2(0,.3);
-      camProjectionRatio=2.-smoothstep(0.,6.,time);
-      camProjectionRatio=3.-time/5.;
-    }
-  else if(get_shot(time,10.))
-    {
-      sceneID=3;
-      vec3 shift=mix(vec3(0),vec3(-3.5,0,-3.5),smoothstep(7,9,time));
-      wheelie=smoothstep(4.2,4.6,time)*(1+sin(time*2.)*.2);
-      camTa=vec3(0,1.-wheelie*.2,0)+shift;
-      camPos=vec3(5.-.1*time,.4-.3*wheelie,-1.-.4*time)+shift;
-      headRot=vec2(0,.6);
-      camProjectionRatio=2.;
-      camTa.xy+=valueNoise2(5e2*time)*.01;
-      globalFade*=smoothstep(10.,8.,time);
-    }
   else
-     sceneID=3,camTa=vec3(0,1,.7),camPos=vec3(4.-.1*time,1,-3.-.5*time),headRot=vec2(0,.3),camProjectionRatio=3.,shouldDrawLogo=smoothstep(0.,1.,time)*smoothstep(15.,9.,time),globalFade=float(time<15.);
-  if(sceneID==3)
-    headRot.y+=abs(sin(iTime*4.)*.1),animationSpeed=vec3(0);
-  time=iTime-time;
-  time=mod(time,14.)+iTime-time;
-  if(sceneID==0||sceneID==2)
-    time=0.;
-  motoPos=vec3(0,.3+.43*wheelie,3e2-50.*time);
-  motoPos.xz+=.5*sin(iTime);
-}
-float rect(vec2 p,float size)
-{
-  p=pow(max(abs(p)+.01-size,0.),vec2(4));
-  return smoothstep(0.,1e-8,p.x+p.y-pow(.01,4.));
-}
-float base(vec2 p,float t)
-{
-  float col=1.;
-  t*=.06;
-  for(int i=0;i<4;i++)
-    for(int j=0;j<3;j++)
-      col*=i==3&&j==1?
-        1.:
-        rect(p-vec2(i,j)*.15,t);
-  return col;
-}
-float holes(vec2 p,float t)
-{
-  t*=.0255;
-  return rect(p-vec2(.25,2)*.15,t)*rect(p-vec2(.75,1.75)*.15,t)*rect(p-vec2(1.25,1.75)*.15,t)*rect(p-vec2(2.25,1.75)*.15,t)*rect(p-vec2(3.25,2.25)*.15,t)*rect(p-vec2(0,.75)*.15,t)*rect(p-vec2(1.25)*.15,t)*rect(p-vec2(1.75,.75)*.15,t)*rect(p-vec2(2.25,.75)*.15,t)*rect(p-vec2(-.25)*.15,t)*rect(p-vec2(.25,-.25)*.15,t)*rect(p-vec2(1.25,.19)*.15,t)*rect(p-vec2(1.25,-.19)*.15,t)*rect(p-vec2(1.75,-.19)*.15,t)*rect(p-vec2(2.25,.19)*.15,t)*rect(p-vec2(2.75,-.25)*.15,t)*rect(p-vec2(3.25,-.25)*.15,t);
-}
-vec3 drawLogo(vec2 uv)
-{
-  if(shouldDrawLogo<=0.)
-    return vec3(1);
-  uv=uv*.6+vec2(.25,.15);
-  float t1=min(shouldDrawLogo*2.,1.),t2=min(shouldDrawLogo*2.-1.,1.);
-  return vec3(holes(uv,t2)-base(uv,t1));
-}
-float bloom(vec3 ro,vec3 rd)
-{
-  ro=motoToWorld(headLightOffsetFromMotoRoot+vec3(.1,-.05,0),true)-ro;
-  vec3 cameraToLightDir=normalize(ro);
-  float aligned=max(0.,dot(cameraToLightDir,-motoToWorld(normalize(vec3(1,-.15,0)),false)));
-  return aligned/(1.+lightFalloff*(1.-dot(rd,cameraToLightDir)))/mix(1.,length(ro),0.);
+     camTa=vec3(0,1,.7),camPos=vec3(4.-.1*time,1,-3.-.5*time),headRot=vec2(0,.3),camProjectionRatio=3.,globalFade=float(time<15.);
 }
 void main()
 {
-  vec2 iResolution=vec2(1280,720),texCoord=gl_FragCoord.xy/iResolution.xy;
+  vec2 iResolution=vec2(1920,1080),texCoord=gl_FragCoord.xy/iResolution.xy;
   iResolution=(texCoord*2.-1.)*vec2(1,iResolution.y/iResolution.x);
   selectShot();
   vec3 cameraTarget=camTa,cameraUp=vec3(0,1,0),cameraPosition=camPos;
-  if(sceneID==1||sceneID==3)
-    cameraPosition=motoToWorldForCamera(camPos),cameraTarget=motoToWorldForCamera(camTa);
   cameraTarget=normalize(cameraTarget-cameraPosition);
   if(abs(dot(cameraTarget,cameraUp))>.99)
     cameraUp=vec3(1,0,0);
@@ -832,11 +305,9 @@ void main()
   cameraUp=normalize(cross(cameraRight,cameraTarget));
   iResolution*=mix(1.,length(iResolution),.1);
   cameraRight=normalize(cameraTarget*camProjectionRatio+iResolution.x*cameraRight+iResolution.y*cameraUp);
-  cameraTarget=rayMarchScene(cameraPosition,cameraRight);
-  if(sceneID==1||sceneID==3)
-    cameraTarget+=.3*bloom(cameraPosition,cameraRight)*5.*vec3(1,.9,.8);
-  cameraTarget=pow(pow(cameraTarget,vec3(1./2.2)),vec3(1,1.05,1.1));
-  fragColor.xyz=cameraTarget*globalFade*drawLogo(iResolution);
+  cameraRight=rayMarchScene(cameraPosition,cameraRight);
+  cameraRight=pow(cameraRight,vec3(1,1.05,1.1)/2.2);
+  fragColor.xyz=cameraRight*globalFade;
   fragColor/=1.+pow(length(iResolution),4.)*.6;
 }
 

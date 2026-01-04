@@ -2,44 +2,11 @@ const float animationAmpX = 1.;
 const float animationAmpY = .2;
 const float animationAmpZ = .25;
 
-float sunglasses(vec3 p) {
-  if (sceneID != SCENE_MOUTARD) {
-    return INF;
-  }
-  // Frame
-  p -= vec3(0, 0.3, -0.9);
-  vec3 framePos = p;
-  float h;
-  float middle = Segment3(p - vec3(0, -0.1, -0.4), vec3(-0.3,0,0), vec3(.3,0,0), h) - 0.04;
-  framePos.x = abs(framePos.x) - 0.5;
-
-  float frame = Segment3(framePos, vec3(0.3, 0., -0.), vec3(0.2, -0.1, -0.4), h) - 0.04;
-  frame = min(frame, middle);
-
-  // Lenses
-  vec3 lensPos = p - vec3(0., -0.25, -0.4);
-  lensPos.x = abs(lensPos.x) - 0.4;
-  float lens = length(lensPos * vec3(0.3, 0.4, 1.)) - 0.1;
-
-  float sunglasses = min(frame, lens);
-  return sunglasses;
-}
-
 vec2 sheep(vec3 p, bool shiftPos) {
     const float SCALE = 0.15;
 
     if (shiftPos) {
-      if (sceneID == SCENE_MOUTARD) { // sheep on moto
-        p -= motoPos + vec3(0., 1.2, -0.3);
-        p.yz *= Rotation(0.5);
-
-        if (wheelie > 0.) { // wheelie
-          p.yz *= Rotation(wheelie * 0.4);
-          p.yz -= vec2(0.35, 0.2) * wheelie;
-        }
-      } else {
-        p -= vec3(1, .46, sheepPos);
-      }
+      p -= vec3(1, .46, sheepPos);
     }
     p /= SCALE;
 
@@ -56,9 +23,6 @@ vec2 sheep(vec3 p, bool shiftPos) {
     }
 
     float n = pow(noise((p-bodyMove+vec3(0,0,0.*10.)+vec3(0,0,0.5))*2.)*.5+.5, .75)*2.-1.;
-    if (sceneID == SCENE_MOUTARD) {
-      n += noise(p-bodyMove+vec3(0,0,-iTime*10.)*2.)*.2;
-    }
     body = body + .05 - n*.2;
 
     // Legs
@@ -109,8 +73,6 @@ vec2 sheep(vec3 p, bool shiftPos) {
     float head = length(ph-vec3(0.,-1.3,-1.2)) - 1.;
     head = smin(head, length(ph-vec3(0.,0.,0.)) - .5, 1.8);
 
-    float glasses = sunglasses(ph);
-
     // hair 
     vec3 pp = ph;
     pp *= vec3(.7,1.,.7);
@@ -149,18 +111,6 @@ vec2 sheep(vec3 p, bool shiftPos) {
     head = smax(head, -length(pp-vec3(-0.7,-1.2,-2.05)) + .14, .1);
     head = smin(head, Torus(pp.xzy-vec3(-0.7,-1.94,-1.2), vec2(.14,.05)), .05);
 
-    float tears;
-    if (sheepTears < 0.) {
-      tears = INF;
-    } else {
-      pp = ph;
-      pp.x = abs(ph.x)-.25;
-      float shift = sheepTears*.02;
-      tears = length(pp-vec3(0.,-0.15-shift*0.5,-1.1-shift*1.)) - .01 - shift*.1;
-      tears -= pow(noise(pp*10.)*.5+.5, 1.) *.1;
-      tears = smin(tears, head+.01, 0.1);
-    }
-
     // tail
     float tail = capsule(p-vec3(0.,-.1,cos(p.y-.7)*.5),vec3(cos(iTime*animationSpeed.z)*animationAmpZ,.2,5.), vec3(0.,2.,4.9), .2);
     tail -= (cos(p.z*8.+p.y*4.5+p.x*4.)+cos(p.z*4.+p.y*6.5+p.x*3.))*.02;
@@ -173,11 +123,9 @@ vec2 sheep(vec3 p, bool shiftPos) {
     dmat.x = smax(dmat.x, -earsClip, .15);
     dmat = MinDist(dmat, vec2(legs, SKIN_ID));
     dmat = MinDist(dmat, vec2(head, SKIN_ID));
-    dmat = MinDist(dmat, vec2(tears, TEARS_ID));
     dmat = MinDist(dmat, vec2(eyes, EYE_ID));
     dmat = MinDist(dmat, vec2(clogs, CLOGS_ID));
     dmat = MinDist(dmat, vec2(ears, SKIN_ID));
-    dmat = MinDist(dmat, vec2(glasses, MOTO_DRIVER_HELMET_ID));
     
     headDist = head;
     dmat.x *= SCALE;

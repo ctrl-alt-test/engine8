@@ -1,38 +1,5 @@
 const float warningHeight = 3.;
 
-vec2 panelWarning(vec3 p) {
-    p -= panelWarningPos;
-    float pan = Triangle(p - vec3(0., warningHeight,-5.), vec2(1.7, .1), .3);
-    if (pan > 8.) {
-        return vec2(INF, GROUND_ID);
-    }
-
-    pan = smax(pan, -Triangle(p - vec3(0., warningHeight, -5.1), vec2(1.6,.1), .3), .001);
-    
-    float tube = Box3(p-vec3(0., 2.,-5.1), vec3(.11, 2., .08), 0.);
-    vec3 pp = p;
-    pp.y = abs(pp.y - 3.65)-.3;
-    tube = min(tube, Box3(pp-vec3(0.,0.,-5.05), vec3(.35,.1,.05), 0.));
-    
-    vec2 dmat = vec2(tube, METAL_ID);
-    return MinDist(dmat, vec2(pan, PANEL_ID));
-}
-
-vec2 blood(vec3 p) {
-    if (sceneID != SCENE_BLOOD) {
-        return vec2(INF, GROUND_ID);
-    }
-    p -= vec3(0, 1.2, -2.5);
-
-    float d = p.y + smoothstep(1.5,8.,length(p.xz)) + 1.;
-    if (d < 0.4) {
-        d -= pow((noise(p*.9+0.)*.5+noise(p*1.6)*.3+noise(p*2.7)*.1)*.5+.5, 3.) *.45
-             ;//* (1.-exp(-(iTime-137.3)*3.));
-        return vec2(d, BLOOD_ID);
-    }
-    return vec2(d, GROUND_ID);
-}
-
 vec2 terrainShape(vec3 p)
 {
     // Compute the road presence
