@@ -6,10 +6,13 @@ const float MAX_RAY_MARCH_DIST = 500.;
 const float INF = 1e6;
 #include "shared.h"
 
-const float lampHeight = 7.;
-
 // Uniforms:
 uniform float iTime;
+
+// only when editing - should be removed for release
+// uniform vec3 u_camPos;
+// uniform vec3 u_var1;
+// uniform vec3 u_var2;
 
 float camProjectionRatio = 1.;
 float wheelie = 0.;

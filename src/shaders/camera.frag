@@ -29,8 +29,8 @@ void selectShot() {
     } else {
         camTa = vec3(0., 1., .7);
         camPos = vec3(4. - 0.1*time, 1., -3.-0.5*time);
+        sheepPos = 0.;
         headRot = vec2(0., 0.3);
         camProjectionRatio = 3.;
-        globalFade = float(time < 15.);
     }
 }
