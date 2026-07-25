@@ -206,7 +206,7 @@ int __cdecl main(int argc, char* argv[])
 #else
 #ifdef SOUND_ON
 		waveOutGetPosition(wave_out_handle, &mmtime, sizeof(MMTIME));
-		float time = ((float)mmtime.u.sample) / 44100.0f;
+		float time = ((float)mmtime.u.sample) / (float)SU_SAMPLE_RATE;
 #else
 		long currentTime = timeGetTime();
 		float time = (float)(currentTime - startTime) * 0.001f;
