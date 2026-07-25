@@ -27,10 +27,18 @@ void selectShot() {
         eyeDir = vec3(0.,0.1-headShift*0.2,1.);
 
     } else {
-        camTa = _TV(camTaClose, vec3(0., 1., .7));
+        camTa = vec3(0., 1., .7);
         camPos = vec3(4. - 0.1*time, 1., -3.-0.5*time);
         sheepPos = 0.;
         headRot = vec2(0., 0.3);
         camProjectionRatio = 3.;
+    }
+
+    // Manual free-fly camera (editor only). Enabled by a boolean _TV checkbox;
+    // driven by the editor's mouse/keyboard. The uniforms are injected by the
+    // editor and this whole block is compiled out in release.
+    if (_TV(manualCam, false)) {
+        camPos = iCamPos;
+        camTa  = iCamTarget;
     }
 }

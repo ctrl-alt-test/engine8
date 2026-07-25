@@ -29,10 +29,11 @@ overhead) in the released intro. `src/shaders/tweaks.frag` documents the macro.
 camProjectionRatio = _TV(projRatio, 1.78);        // float  -> DragFloat
 camTa              = _TV(camTaClose, vec3(0, 1, .7)); // vec3 -> DragFloat3
 fogColor           = _TVC(fogTint, vec3(.4, .5, .7)); // vec3 -> color picker
+useFreeCam         = _TV(manualCam, false);          // bool -> Checkbox
 ```
 
-* Supports `float` and `vec2`/`vec3`/`vec4`; use `_TVC` with a `vec3` for a
-  color picker.
+* Supports `float`, `vec2`/`vec3`/`vec4`, and `bool` (a checkbox); use `_TVC`
+  with a `vec3` for a color picker.
 * An ImGui panel shows a slider per `_TV`. Moving it updates the view live.
 * **Bake to source** writes the current values back into `src/shaders/*.frag`
   as the new literals; **Revert** restores the loaded values.
@@ -49,6 +50,18 @@ fogColor           = _TVC(fogTint, vec3(.4, .5, .7)); // vec3 -> color picker
 
 A new ImGui widget has been added to go anywhere in time.
 In the future, we'd like to provide more ImGui widgets.
+
+### Manual camera
+
+Editor-only free-fly camera for scouting shots. The editor injects `iCamPos`,
+`iCamTarget` and `iCamDir` (view direction) uniforms and drives them from the
+mouse/keyboard. Guard its use with `#if EDITOR` (the editor defines `EDITOR`;
+in release the block is compiled out). See the example at the end of
+`src/shaders/camera.frag`, gated by a boolean `_TV(manualCam, ...)` checkbox.
+
+* Right mouse button + drag: look around
+* `w`/`a`/`s`/`d`: move, `q`/`e`: down/up, `shift`: move faster
+* mouse wheel: adjust movement speed
 
 ### Music
 
@@ -93,6 +106,7 @@ Here's what changed compared to Leviathan 2.0:
 * Automated shader minification upon compilation.
 * Simple unintrusive editor mode with seeking and hot reloading.
 * Live-tweakable shader constants (`_TV`) that bake back to source.
+* Editor-only free-fly camera for scouting shots.
 * Easy to customize for your needs.
 
 ## Compatibility

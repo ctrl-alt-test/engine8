@@ -1,7 +1,7 @@
 // custom build and feature flags
 #ifdef DEBUG
 	#define FULLSCREEN          0
-	// #define SOUND_ON
+	#define SOUND_ON
 #else
 	#define FULLSCREEN          1
 	#define SOUND_ON
@@ -239,6 +239,7 @@ int __cdecl main(int argc, char* argv[])
 		#else
 			glUniform1f(glGetUniformLocation(shaderMain, "iTime"), time);
 			EditUI::Tweaks::drawAndApply(shaderMain);
+			EditUI::updateManualCamera(shaderMain);
 
 			EditUI::drawEnd();
 		#endif
