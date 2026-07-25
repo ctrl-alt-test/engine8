@@ -44,16 +44,14 @@ useFreeCam         = _TV(manualCam, false);          // bool -> Checkbox
 ### Shortcuts
 
 * `space`: toggle play/pause
-* `alt-down`: pause
-* `alt-up`: play
-* `alt-right`: go forward in time (use `shift` for smaller steps)
-* `alt-left`: go back in time (use `shift` for smaller steps)
+* `right`/`left`: scrub forward/backward (hold to keep scrubbing; `shift` for a
+  slower, finer rate)
 * `F1`: show/hide the ImGui panel (controls keep working while hidden)
 
-The ImGui panel also shows the current framerate, the last shader compile
-status (timing on success, errors in red), a volume slider, and a time slider
-to seek anywhere in the demo. In the future, we'd like to provide more ImGui
-widgets.
+The ImGui panel also has a play/pause button next to the time slider, the
+current framerate, the last shader compile status (timing on success, errors in
+red), a volume slider, and a time slider to seek anywhere in the demo. In the
+future, we'd like to provide more ImGui widgets.
 
 ### Manual camera
 
@@ -66,8 +64,10 @@ by a boolean `_TV(manualCam, ...)` checkbox.
 * `w`/`a`/`s`/`d`: move, `q`/`e`: down/up, `shift`: move faster
 * mouse wheel: adjust movement speed
 
-The panel displays the current camera position while the manual camera is
-enabled.
+While the manual camera is enabled the panel shows a Camera section with the
+current position, a movement-speed slider, **Copy pos/target/dir** buttons
+(each copies a ready-to-paste `vec3(...)` to the clipboard) and a **Reset**
+button.
 
 ### Music
 

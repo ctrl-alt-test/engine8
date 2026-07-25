@@ -223,6 +223,7 @@ int __cdecl main(int argc, char* argv[])
 				track.seek(sliderTime);
 			time = sliderTime;
 			track.setVolume(EditUI::volume());
+			EditUI::setPlaying(track.is_playing());
 
 		#else
 			// do minimal message handling so windows doesn't kill your application
