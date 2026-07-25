@@ -32,6 +32,9 @@
     <ClCompile Include="src\edit\editor.cpp">
       <Filter>editor</Filter>
     </ClCompile>
+    <ClCompile Include="src\edit\tweaks.cpp">
+      <Filter>editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\definitions.h" />
@@ -39,6 +42,9 @@
       <Filter>ext</Filter>
     </ClInclude>
     <ClInclude Include="src\edit\editor.h">
+      <Filter>editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\edit\tweaks.h">
       <Filter>editor</Filter>
     </ClInclude>
     <ClInclude Include="src\edit\song.h">
