@@ -215,8 +215,14 @@ int __cdecl main(int argc, char* argv[])
 #endif
 
 		#if EDITOR_CONTROLS
-			EditUI::drawStart(time);
-			track.seek(time);
+			float sliderTime = time;
+			EditUI::drawStart(sliderTime);
+			// Only seek when the user actually scrubbed the time slider;
+			// seeking every frame would stop/restart playback (stutter + drift).
+			if (sliderTime != time)
+				track.seek(sliderTime);
+			time = sliderTime;
+			track.setVolume(EditUI::volume());
 
 		#else
 			// do minimal message handling so windows doesn't kill your application

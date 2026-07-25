@@ -43,25 +43,31 @@ useFreeCam         = _TV(manualCam, false);          // bool -> Checkbox
 
 ### Shortcuts
 
+* `space`: toggle play/pause
 * `alt-down`: pause
 * `alt-up`: play
 * `alt-right`: go forward in time (use `shift` for smaller steps)
 * `alt-left`: go back in time (use `shift` for smaller steps)
+* `F1`: show/hide the ImGui panel (controls keep working while hidden)
 
-A new ImGui widget has been added to go anywhere in time.
-In the future, we'd like to provide more ImGui widgets.
+The ImGui panel also shows the current framerate, the last shader compile
+status (timing on success, errors in red), a volume slider, and a time slider
+to seek anywhere in the demo. In the future, we'd like to provide more ImGui
+widgets.
 
 ### Manual camera
 
 Editor-only free-fly camera for scouting shots. The editor injects `iCamPos`,
 `iCamTarget` and `iCamDir` (view direction) uniforms and drives them from the
-mouse/keyboard. Guard its use with `#if EDITOR` (the editor defines `EDITOR`;
-in release the block is compiled out). See the example at the end of
-`src/shaders/camera.frag`, gated by a boolean `_TV(manualCam, ...)` checkbox.
+mouse/keyboard. See the example at the end of `src/shaders/camera.frag`, gated
+by a boolean `_TV(manualCam, ...)` checkbox.
 
 * Right mouse button + drag: look around
 * `w`/`a`/`s`/`d`: move, `q`/`e`: down/up, `shift`: move faster
 * mouse wheel: adjust movement speed
+
+The panel displays the current camera position while the manual camera is
+enabled.
 
 ### Music
 
