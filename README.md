@@ -19,6 +19,27 @@ Select the "Editor" configuration, run the project.
     * The vertex shader and the postprocess are disabled by default, but the
       code is still around.
 
+### Tweakable constants
+
+Wrap any shader literal in `_TV(name, value)` to expose it as a live control
+in the editor while it still compiles to a plain literal (no uniform, zero
+overhead) in the released intro. `src/shaders/tweaks.frag` documents the macro.
+
+```glsl
+camProjectionRatio = _TV(projRatio, 1.78);        // float  -> DragFloat
+camTa              = _TV(camTaClose, vec3(0, 1, .7)); // vec3 -> DragFloat3
+fogColor           = _TVC(fogTint, vec3(.4, .5, .7)); // vec3 -> color picker
+```
+
+* Supports `float` and `vec2`/`vec3`/`vec4`; use `_TVC` with a `vec3` for a
+  color picker.
+* An ImGui panel shows a slider per `_TV`. Moving it updates the view live.
+* **Bake to source** writes the current values back into `src/shaders/*.frag`
+  as the new literals; **Revert** restores the loaded values.
+* Adding/removing a `_TV` line and saving (`ctrl+s`) adds/removes its slider.
+* Use `_TV` inside a function body, not to initialise a global (in the editor
+  it expands to a uniform, which is not a constant expression).
+
 ### Shortcuts
 
 * `alt-down`: pause
@@ -71,6 +92,7 @@ Here's what changed compared to Leviathan 2.0:
 * Readymade configurations for different use cases.
 * Automated shader minification upon compilation.
 * Simple unintrusive editor mode with seeking and hot reloading.
+* Live-tweakable shader constants (`_TV`) that bake back to source.
 * Easy to customize for your needs.
 
 ## Compatibility
