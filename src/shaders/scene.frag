@@ -9,10 +9,8 @@ const float INF = 1e6;
 // Uniforms:
 uniform float iTime;
 
-// only when editing - should be removed for release
-// uniform vec3 u_camPos;
-// uniform vec3 u_var1;
-// uniform vec3 u_var2;
+// Tweakable constants: live uniforms in the editor, literals in release.
+#include "tweaks.frag"
 
 float camProjectionRatio = 1.;
 float wheelie = 0.;
