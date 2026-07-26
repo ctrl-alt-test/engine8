@@ -74,11 +74,12 @@ button.
 * `src/music/music.asm` comes from [Sointu](https://github.com/vsariola/sointu).
   Replace it with your music.
 * `music.obj` is expected, run `compile.bat` in `src/music` to build it.
-* To synchronize the graphics with the music, you'll want to enable music in the `Editor` build:
-    - Make sure `#define SOUND_ON` is set.
-    - It needs a .wav file called `themusic.wav`; you can generate it by running the `wav_export` project.
-
-We plan to simplify this workflow in the future.
+* To synchronize the graphics with the music, enable music in the `Editor` build
+  by making sure `#define SOUND_ON` is set.
+* The editor plays the audio through a `themusic.wav` file. It renders that file
+  automatically on the first run, and re-renders it whenever the music changes
+  (i.e. when `music.obj` is newer than the wav), so there's nothing to do by
+  hand.
 
 ## Updates
 
@@ -136,7 +137,7 @@ Use for general development. Only minimal crinklering but nothing extra included
 Deprecated, might work but currently not really useful and not updated. Editor covers everything in this configuration.
 
 ### Editor
-Creates a bigger exe similar to Debug, but with keyboard controls for pausing and seeking around temporally. Requires a pre-rendered copy of the audio track used (well, not a must but...). Overwrites Debug configuration binaries.
+Creates a bigger exe similar to Debug, but with keyboard controls for pausing and seeking around temporally. When sound is enabled it renders the audio track automatically (see the Music section). Overwrites Debug configuration binaries.
 
 ## Build Flags
 This section describes the preprocessor definitions available for various features and size optimizations.

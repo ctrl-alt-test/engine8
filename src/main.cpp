@@ -84,6 +84,9 @@ void entrypoint(void)
 #include "edit/song.h"
 #include "edit/editui.h"
 #include "edit/tweaks.h"
+#ifdef SOUND_ON
+#include "edit/wavexport.h"
+#endif
 int __cdecl main(int argc, char* argv[])
 #endif
 {
@@ -181,6 +184,9 @@ int __cdecl main(int argc, char* argv[])
 #endif
 
 	#ifdef SOUND_ON
+	// Render themusic.wav on the fly if it's missing or out of date, so the
+	// editor's DirectShow player (used for seeking) always has fresh audio.
+	Leviathan::ensureMusicWav(TRACK_AS_WAV_FILE);
 	Leviathan::Song track(TRACK_AS_WAV_FILE);
 	#else
 	Leviathan::NoSong track;

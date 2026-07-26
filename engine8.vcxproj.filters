@@ -35,6 +35,9 @@
     <ClCompile Include="src\edit\tweaks.cpp">
       <Filter>editor</Filter>
     </ClCompile>
+    <ClCompile Include="src\edit\wavexport.cpp">
+      <Filter>editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\definitions.h" />
@@ -48,6 +51,9 @@
       <Filter>editor</Filter>
     </ClInclude>
     <ClInclude Include="src\edit\song.h">
+      <Filter>editor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\edit\wavexport.h">
       <Filter>editor</Filter>
     </ClInclude>
     <ClInclude Include="src\music\music.h">
